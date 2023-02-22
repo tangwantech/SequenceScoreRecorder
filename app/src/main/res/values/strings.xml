@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Sequence Score Recorder</string>
+    <string-array name="gender">
+        <item>M</item>
+        <item>F</item>
+    </string-array>
+    <string-array name="classes">
+        <item>Form 1A</item>
+        <item>Form 1B</item>
+        <item>Form 1Bil</item>
+    </string-array>
 </resources>
