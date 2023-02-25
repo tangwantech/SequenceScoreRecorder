@@ -7,7 +7,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.StudentDatabaseHomeFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="@dimen/margin_14"
@@ -16,12 +17,22 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/btnsLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/btnClearDatabase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/minimum_button_width"
+                android:minHeight="50dp"
+                android:text="Clear database"
+                android:textSize="@dimen/text_size_12"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/btnNewStudent"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginEnd="@dimen/margin_12"/>
 
             <Button
                 android:id="@+id/btnNewStudent"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minWidth="@dimen/minimum_button_width"
@@ -29,62 +40,69 @@
                 android:text="Add student"
                 android:textSize="@dimen/text_size_12"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/hDivider"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            app:layout_constraintTop_toBottomOf="@id/btnsLayout" />
+            android:layout_height="2dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tvDatabaseHeader"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:layout_height="@dimen/headerHeight"
+                android:gravity="center_vertical"
+                android:text="All Students"
+                android:textSize="@dimen/text_size_16"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tvDatabaseHeader"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/headerHeight"
-            android:gravity="center_vertical"
-            android:text="All Students"
-            android:textSize="@dimen/text_size_16"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hDivider" />
+            <TextView
+                android:id="@+id/tvTotalNumberOfStudents"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:layout_height="@dimen/headerHeight"
+                android:gravity="end|center_vertical"
+                android:layout_gravity="right"
+                android:text="0"
+                android:textSize="@dimen/text_size_16"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvTotalNumberOfStudents"
-            style="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/headerHeight"
-            android:gravity="center_vertical"
-            android:textSize="@dimen/text_size_16"
-            android:textStyle="bold"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hDivider" />
 
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/hDivider2"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            app:layout_constraintTop_toBottomOf="@id/tvDatabaseHeader" />
+            android:layout_height="2dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvStudentDbHome"
+        <LinearLayout
+            android:id="@+id/rvLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/hDivider2" />
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/margin_12">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvStudentDbHome"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/tvNoDataAvailable"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:text="No data available"
-            android:textSize="@dimen/text_size_20"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hDivider2" />
+            android:textSize="@dimen/text_size_20" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </FrameLayout>

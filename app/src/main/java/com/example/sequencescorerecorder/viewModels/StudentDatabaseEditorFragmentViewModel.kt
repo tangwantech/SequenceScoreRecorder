@@ -33,17 +33,16 @@ class StudentDatabaseEditorFragmentViewModel: ViewModel() {
 
                     }
                 }
-                println("All student data: $allStudentsData")
             }
         }
     }
 
     fun addStudentDataToTempList(studentData: StudentData){
-        tempStudentsData.add(studentData)
+        tempStudentsData.add(0, studentData)
         _studentsDataToDisplay.value = tempStudentsData
     }
 
-    fun checkIfStudentIdInDatabase(studentData: StudentData): Boolean{
+    fun isStudentIdInDatabase(studentData: StudentData): Boolean{
         if (allStudentsData.isNotEmpty()){
             allStudentsData.forEach {
                 if(it.studentId == studentData.studentId){
@@ -55,23 +54,13 @@ class StudentDatabaseEditorFragmentViewModel: ViewModel() {
 
         return false
     }
-    fun checkIfStudentIdInTempStudentsData(studentData: StudentData): Boolean{
+    fun isStudentIdInTempStudentsData(studentData: StudentData): Boolean{
         if(tempStudentsData.isNotEmpty()){
             tempStudentsData.forEach {
-//                println(it.studentId == studentData.studentId)
                 return it.studentId == studentData.studentId
             }
         }
         return false
-    }
-
-
-
-    fun clearDatabase(){
-        allStudentsData.clear()
-        viewModelScope.launch(Dispatchers.IO){
-            database.studentDataDao().deleteAllStudents()
-        }
     }
 
     fun writeStudentsDataToDatabase() {
@@ -83,6 +72,11 @@ class StudentDatabaseEditorFragmentViewModel: ViewModel() {
             }
         }
 
+    }
+
+    fun clearCurrentStudentDataList() {
+        tempStudentsData.clear()
+        _studentsDataToDisplay.value = tempStudentsData
     }
 
 }

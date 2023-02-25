@@ -6,28 +6,34 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sequencescorerecorder.R
 import com.example.sequencescorerecorder.dataModels.StudentIdAndNameData
 
-class StudentHomeRecyclerAdapter(
+class StudentDbHomeRecyclerAdapter(
     private val context: Context,
     private val studentIdAndNameData: List<StudentIdAndNameData>,
-    private val homeRecyclerItemButtonsClickListener: OnHomeRecyclerItemButtonsClickListener
-) : RecyclerView.Adapter<StudentHomeRecyclerAdapter.ViewHolder>() {
+    private val homeRecyclerItemsClickListener: OnHomeRecyclerItemsClickListener
+) : RecyclerView.Adapter<StudentDbHomeRecyclerAdapter.ViewHolder>() {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvStudentName: TextView = view.findViewById(R.id.tvStudentName)
         val tvStudentId: TextView = view.findViewById(R.id.tvStudentId)
         private val btnModify: Button = view.findViewById(R.id.btnModify)
         private val btnDelete: Button = view.findViewById(R.id.btnDelete)
+        private val rootLayout: ConstraintLayout = view.findViewById(R.id.home_recycler_item_root_layout)
 
         init {
             btnDelete.setOnClickListener {
-                homeRecyclerItemButtonsClickListener.onDeleteButtonClicked(adapterPosition)
+                homeRecyclerItemsClickListener.onDeleteButtonClicked(adapterPosition)
             }
 
             btnModify.setOnClickListener {
-                homeRecyclerItemButtonsClickListener.onModifyButtonClicked(adapterPosition)
+                homeRecyclerItemsClickListener.onModifyButtonClicked(adapterPosition)
+            }
+
+            rootLayout.setOnClickListener {
+                homeRecyclerItemsClickListener.onItemClicked(adapterPosition)
             }
         }
     }
@@ -47,8 +53,9 @@ class StudentHomeRecyclerAdapter(
         return studentIdAndNameData.size
     }
 
-    interface OnHomeRecyclerItemButtonsClickListener {
+    interface OnHomeRecyclerItemsClickListener {
         fun onModifyButtonClicked(position: Int)
         fun onDeleteButtonClicked(position: Int)
+        fun onItemClicked(position: Int)
     }
 }

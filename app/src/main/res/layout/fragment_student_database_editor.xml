@@ -1,78 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="@dimen/margin_14"
     android:paddingEnd="@dimen/margin_14"
     android:layout_marginTop="@dimen/margin_8"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <Button
-        android:id="@+id/btnClearDatabase"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Clear database"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/idTextInputLayout"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginEnd="@dimen/margin_12"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/idTextInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/studentTextInputLayout"
-        android:hint="Enter student id">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/studentId"
-            android:inputType="phone"
+        android:gravity="right">
+        <Button
+            android:id="@+id/btnClearCurrentList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/clear_current_list"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/idTextInputLayout"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginEnd="@dimen/margin_12"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/idTextInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="1"/>
+            android:hint="Enter student id">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/studentId"
+                android:inputType="phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"/>
 
-    </com.google.android.material.textfield.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/studentTextInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/idTextInputLayout"
-        android:layout_marginTop="@dimen/margin_4"
-        android:hint="Enter student Name">
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/studentName"
-            android:inputType="textPersonName"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/studentTextInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="1"/>
 
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="@dimen/margin_4"
+            android:hint="Enter student Name">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/studentName"
+                android:inputType="textPersonName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/genderTextInputLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/studentTextInputLayout"
-        android:layout_marginTop="@dimen/margin_4"
-        android:hint="Select student gender">
-        <AutoCompleteTextView
-            android:id="@+id/studentGender"
-            android:inputType="none"
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/genderTextInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_4"
+            android:hint="Select student gender">
+            <AutoCompleteTextView
+                android:id="@+id/studentGender"
+                android:inputType="none"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_4"
-        app:layout_constraintTop_toBottomOf="@id/genderTextInputLayout">
+        android:layout_marginTop="@dimen/margin_4">
         <Button
             android:id="@+id/btnFinish"
             android:layout_width="wrap_content"
@@ -89,15 +95,17 @@
             android:text="Add"
             app:layout_constraintEnd_toEndOf="parent"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvStudentDatabase"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="100dp"
-        android:layout_marginTop="@dimen/margin_4"
-        app:layout_constraintTop_toBottomOf="@id/buttonsLayout"
-        />
+        android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvStudentDatabase"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_4"
+            />
+    </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

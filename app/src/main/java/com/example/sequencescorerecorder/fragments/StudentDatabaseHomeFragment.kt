@@ -14,21 +14,22 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sequencescorerecorder.R
-import com.example.sequencescorerecorder.adapters.StudentHomeRecyclerAdapter
+import com.example.sequencescorerecorder.adapters.StudentDbHomeRecyclerAdapter
 import com.example.sequencescorerecorder.dataModels.StudentData
 import com.example.sequencescorerecorder.database.StudentDatabase
 import com.example.sequencescorerecorder.viewModels.StudentDatabaseHomeFragmentViewModel
 import com.google.android.material.textfield.TextInputEditText
 
 class StudentDatabaseHomeFragment : Fragment(),
-    StudentHomeRecyclerAdapter.OnHomeRecyclerItemButtonsClickListener {
+    StudentDbHomeRecyclerAdapter.OnHomeRecyclerItemsClickListener {
 
     private lateinit var studentDatabaseHomeFragmentViewModel: StudentDatabaseHomeFragmentViewModel
     private lateinit var btnNewStudent: Button
     private lateinit var rvStudentDbHomeRecycler: RecyclerView
+    private lateinit var rvLayout: LinearLayout
     private lateinit var tvNoDataAvailable: TextView
     private lateinit var tvTotalNumberOfStudents: TextView
-//    private lateinit var studentClass: AutoCompleteTextView
+    private lateinit var btnClearDatabase: Button
 
     private lateinit var onRequestToNavigateToStudentDataBaseEditorListener: OnRequestToNavigateToStudentDataBaseEditorListener
 
@@ -74,10 +75,17 @@ class StudentDatabaseHomeFragment : Fragment(),
         rvStudentDbHomeRecycler = view.findViewById(R.id.rvStudentDbHome)
         tvNoDataAvailable = view.findViewById(R.id.tvNoDataAvailable)
         tvTotalNumberOfStudents = view.findViewById(R.id.tvTotalNumberOfStudents)
-//        studentClass = view.findViewById(R.id.studentClass)
+        btnClearDatabase = view.findViewById(R.id.btnClearDatabase)
+        rvLayout = view.findViewById(R.id.rvLayout)
+
     }
 
     private fun setupViewListeners() {
+
+        btnClearDatabase.setOnClickListener {
+            displayMessageToClearDatabase()
+        }
+
         btnNewStudent.setOnClickListener {
 
             val classSelectionDialog = AlertDialog.Builder(requireContext())
@@ -94,14 +102,14 @@ class StudentDatabaseHomeFragment : Fragment(),
 
             classSelectionDialog.apply {
                 setView(classSelectionView)
-                setPositiveButton("OK") { _, _ ->
+                setPositiveButton(requireContext().resources.getString(R.string.ok)) { _, _ ->
                     if (studentClass.text.isNotEmpty()) {
                         onRequestToNavigateToStudentDataBaseEditorListener.navigateToStudentDataBaseEditor(
                             studentClass.text.toString()
                         )
                     }
                 }
-                setNegativeButton("Cancel") { btn, _ ->
+                setNegativeButton(requireContext().resources.getString(R.string.cancel)) { _, _ ->
 
                 }
             }.create().show()
@@ -125,17 +133,19 @@ class StudentDatabaseHomeFragment : Fragment(),
             viewLifecycleOwner,
             Observer { allStudentsIdsAndNamesData ->
                 if (allStudentsIdsAndNamesData.isNotEmpty()) {
-                    rvStudentDbHomeRecycler.visibility = View.VISIBLE
+                    rvLayout.visibility = View.VISIBLE
                     tvNoDataAvailable.visibility = View.GONE
-                    val adapter = StudentHomeRecyclerAdapter(
+                    btnClearDatabase.isEnabled = true
+                    val adapter = StudentDbHomeRecyclerAdapter(
                         requireContext(),
                         allStudentsIdsAndNamesData,
                         this
                     )
                     rvStudentDbHomeRecycler.adapter = adapter
                 } else {
-                    rvStudentDbHomeRecycler.visibility = View.GONE
+                    rvLayout.visibility = View.GONE
                     tvNoDataAvailable.visibility = View.VISIBLE
+                    btnClearDatabase.isEnabled = false
                 }
 
             })
@@ -157,7 +167,7 @@ class StudentDatabaseHomeFragment : Fragment(),
                     if (it) {
                         Toast.makeText(
                             requireContext(),
-                            "Data Deleted successfully",
+                            requireContext().resources.getString(R.string.data_deleted_successfully),
                             Toast.LENGTH_LONG
                         ).show()
                         studentDatabaseHomeFragmentViewModel.refreshDatabase()
@@ -173,7 +183,7 @@ class StudentDatabaseHomeFragment : Fragment(),
                     if (it) {
                         Toast.makeText(
                             requireContext(),
-                            "Data updated successfully",
+                            requireContext().resources.getString(R.string.data_updated_successfully),
                             Toast.LENGTH_LONG
                         ).show()
                         studentDatabaseHomeFragmentViewModel.refreshDatabase()
@@ -185,7 +195,8 @@ class StudentDatabaseHomeFragment : Fragment(),
 
     override fun onResume() {
         super.onResume()
-        studentDatabaseHomeFragmentViewModel.getAllStudentsFromDatabase()
+        requireActivity().title = requireContext().resources.getString(R.string.student_database_manager)
+        studentDatabaseHomeFragmentViewModel.refreshDatabase()
     }
 
 
@@ -203,6 +214,33 @@ class StudentDatabaseHomeFragment : Fragment(),
         displayDeleteStudentDataDialog(position)
     }
 
+    override fun onItemClicked(position: Int) {
+        displayStudentDetailsDialog(position)
+    }
+
+    private fun displayStudentDetailsDialog(position: Int){
+        val studentData = studentDatabaseHomeFragmentViewModel.allStudentData.value!![position]
+        val view = requireActivity().layoutInflater.inflate(R.layout.student_details, null)
+
+        val studentId: TextView = view.findViewById(R.id.tvIdDetails)
+        val studentName: TextView = view.findViewById(R.id.tvNameDetails)
+        val studentGender: TextView = view.findViewById(R.id.tvGenderDetails)
+        val studentClass: TextView = view.findViewById(R.id.tvClassDetails)
+
+        studentId.text = "${requireContext().resources.getString(R.string.id)} ${studentData.studentId}"
+        studentName.text = "${requireContext().resources.getString(R.string.name)} ${studentData.studentName}"
+        studentName.visibility = View.GONE
+        studentGender.text = "${requireContext().resources.getString(R.string.gender)} ${studentData.studentGender}"
+        studentClass.text = "${requireContext().resources.getString(R.string._class)} ${studentData.studentClass}"
+
+        val studentDetailsDialog = AlertDialog.Builder(requireContext())
+        studentDetailsDialog.apply {
+            setView(view)
+            setTitle(studentData.studentName?.uppercase())
+            setPositiveButton(requireContext().resources.getString(R.string.ok)){_, _ -> }
+        }.create().show()
+    }
+
     private fun displayDeleteStudentDataDialog(position: Int) {
         val view =
             requireActivity().layoutInflater.inflate(R.layout.item_to_delete_dialog_view, null)
@@ -211,18 +249,17 @@ class StudentDatabaseHomeFragment : Fragment(),
 
         val studentIdAndNameData =
             studentDatabaseHomeFragmentViewModel.allStudentIdsAndNamesData.value!![position]
-        tvIdToDelete.text = "ID: ${studentIdAndNameData.studentId}"
-        tvNameToDelete.text = "Name: ${studentIdAndNameData.studentName}"
+        tvIdToDelete.text = "${requireContext().resources.getString(R.string.id)} ${studentIdAndNameData.studentId}"
+        tvNameToDelete.text = "${requireContext().resources.getString(R.string.name)} ${studentIdAndNameData.studentName}"
 
 
         val deleteStudentDataDialog = AlertDialog.Builder(requireContext())
         deleteStudentDataDialog.apply {
-            setTitle("Delete student data")
             setView(view)
-            setPositiveButton("Ok") { _, _ ->
+            setPositiveButton(requireContext().resources.getString(R.string.delete)) { _, _ ->
                 studentDatabaseHomeFragmentViewModel.deleteStudentDataAt(position)
             }
-            setNegativeButton("Cancel") { _, _ ->
+            setNegativeButton(requireContext().resources.getString(R.string.cancel)) { _, _ ->
 
             }
         }.create().show()
@@ -259,9 +296,9 @@ class StudentDatabaseHomeFragment : Fragment(),
 
         val modifyStudentDataDialog = AlertDialog.Builder(requireContext())
         modifyStudentDataDialog.apply {
-            setTitle("Modify student data")
+            setTitle(requireContext().resources.getString(R.string.modify_data))
             setView(view)
-            setPositiveButton("Ok") { _, _ ->
+            setPositiveButton(requireContext().resources.getString(R.string.ok)) { _, _ ->
                 val studentDataToUpdate = StudentData(
                     studentData.id,
                     idToModify.text.toString(),
@@ -274,14 +311,26 @@ class StudentDatabaseHomeFragment : Fragment(),
                 }
 
             }
-            setNegativeButton("Cancel") { _, _ ->
+            setNegativeButton(requireContext().resources.getString(R.string.cancel)) { _, _ ->
 
             }
+        }.create().show()
+    }
+
+    private fun displayMessageToClearDatabase(){
+        val alertDialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        alertDialog.apply {
+            setTitle(requireContext().resources.getString(R.string.clear_database))
+            setMessage(requireContext().resources.getString(R.string.message_to_clear_database))
+            setPositiveButton(requireContext().resources.getString(R.string._continue)){_, _ ->
+                studentDatabaseHomeFragmentViewModel.clearDatabase()
+            }
+            setNegativeButton(requireContext().resources.getString(R.string.cancel)){_, _ -> }
         }.create().show()
     }
 
 }
 
 interface OnRequestToNavigateToStudentDataBaseEditorListener {
-    fun navigateToStudentDataBaseEditor(studentName: String)
+    fun navigateToStudentDataBaseEditor(name: String)
 }

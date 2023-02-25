@@ -87,5 +87,15 @@ class StudentDatabaseHomeFragmentViewModel : ViewModel() {
         }
     }
 
+    fun clearDatabase(){
+        viewModelScope.launch(Dispatchers.IO){
+            database.studentDataDao().deleteAllStudents()
+            withContext(Dispatchers.Main){
+                refreshDatabase()
+            }
+
+        }
+    }
+
 
 }

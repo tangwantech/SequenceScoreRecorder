@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:minHeight="54dp"
         android:id="@+id/btnDatabase"
-        android:text="Student database"
+        android:text="@string/student_database_manager"
         android:layout_marginTop="@dimen/margin_8"
         android:textAllCaps="true"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton">
@@ -27,7 +27,7 @@
         android:minHeight="54dp"
         android:id="@+id/btnSequenceEditor"
         android:layout_marginTop="@dimen/margin_8"
-        android:text="Sequence editor"
+        android:text="@string/sequence_scores_manager"
         android:textAllCaps="true"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton">
 

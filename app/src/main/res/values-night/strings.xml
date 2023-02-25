@@ -1,3 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="student_database_manager">Student database manager</string>
+    <string name="sequence_scores_manager">Sequence scores manager</string>
+    <string name="id">ID:</string>
+    <string name="name">Name:</string>
+    <string name="gender">Gender:</string>
+    <string name="_class">Class:</string>
+    <string name="student">Student</string>
+    <string name="cancel">Cancel</string>
+    <string name="modify_data">Modify data</string>
+    <string name="delete_data">Delete data</string>
+    <string name="ok">OK</string>
+    <string name="data_updated_successfully">Data updated successfully.</string>
+    <string name="data_deleted_successfully">Data deleted successfully.</string>
+    <string name="already_exists">already exists.</string>
+    <string name="clear_current_list">Clear current list</string>
+    <string name="_continue">Continue</string>
+    <string name="delete">delete</string>
+    <string name="clear_database">Clear database</string>
+    <string name="message_to_clear_database">This action will permanently erase all students data in database</string>
+
+    <string-array name="gender">
+        <item>M</item>
+        <item>F</item>
+    </string-array>
+    <string-array name="classes">
+        <item>Form 1A</item>
+        <item>Form 1B</item>
+        <item>Form 1Bil</item>
+        <item>Form 4Arts</item>
+        <item>Form 5sc</item>
+        <item>Lower sixth S1</item>
+        <item>Lower sixth S2</item>
+        <item>Lower sixth S3</item>
+        <item>Lower sixth S4</item>
+        <item>Upper sixth S1</item>
+        <item>Upper sixth S2</item>
+        <item>Upper sixth S3</item>
+        <item>Upper sixth S4</item>
+    </string-array>
+
 </resources>

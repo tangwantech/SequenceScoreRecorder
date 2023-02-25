@@ -32,9 +32,8 @@ class StudentDatabaseEditorFragment : Fragment() {
     private lateinit var btnFinish: Button
     private lateinit var btnAdd: Button
     private lateinit var rvStudents: RecyclerView
-    private lateinit var btnClearDatabase: Button
+    private lateinit var btnClearCurrentList: Button
     private lateinit var onRequestToNavigateToStudentDataBaseHomeListener: OnRequestToNavigateToStudentDataBaseHomeListener
-//    private lateinit var studentDbRvAdapter: StudentDatabaseRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,11 +69,11 @@ class StudentDatabaseEditorFragment : Fragment() {
         studentId = view.findViewById(R.id.studentId)
         studentName = view.findViewById(R.id.studentName)
         studentGender = view.findViewById(R.id.studentGender)
-//        studentClass = view.findViewById(R.id.studentClass)
         btnFinish = view.findViewById(R.id.btnFinish)
         btnAdd = view.findViewById(R.id.btnAdd)
         rvStudents = view.findViewById(R.id.rvStudentDatabase)
-        btnClearDatabase = view.findViewById(R.id.btnClearDatabase)
+        btnClearCurrentList = view.findViewById(R.id.btnClearCurrentList)
+
 
 
     }
@@ -86,13 +85,6 @@ class StudentDatabaseEditorFragment : Fragment() {
             resources.getStringArray(R.array.gender)
         )
         studentGender.setAdapter(genderAdapter)
-
-//        val studentClassesAdapter = ArrayAdapter<String>(
-//            requireContext(),
-//            R.layout.drop_down_item,
-//            resources.getStringArray(R.array.classes)
-//        )
-//        studentClass.setAdapter(studentClassesAdapter)
 
         val layoutMan = LinearLayoutManager(requireContext())
         layoutMan.orientation = LinearLayoutManager.VERTICAL
@@ -108,23 +100,17 @@ class StudentDatabaseEditorFragment : Fragment() {
         })
     }
 
-    private fun displayStudentDataExistDialog(studentData: StudentData) {
-        val alertDialog = AlertDialog.Builder(requireContext())
-        alertDialog.apply {
-            setMessage("Student with id: ${studentData.studentId} already exists.")
-            setPositiveButton("OK"){_, _ ->
-            }
-        }.create().show()
-    }
-
     private fun setupViewListeners() {
+
+        btnClearCurrentList.setOnClickListener {
+            studentDatabaseEditorFragmentViewModel.clearCurrentStudentDataList()
+        }
+
         btnFinish.setOnClickListener {
             onDestroy()
             onRequestToNavigateToStudentDataBaseHomeListener.onRequestToNavigateToStudentDataBaseHome()
         }
-        btnClearDatabase.setOnClickListener {
-            studentDatabaseEditorFragmentViewModel.clearDatabase()
-        }
+
         btnAdd.setOnClickListener {
             if (studentId.text!!.isNotEmpty() && studentName.text!!.isNotEmpty() && studentGender.text.isNotEmpty()) {
                 val studentData = StudentData(
@@ -134,8 +120,8 @@ class StudentDatabaseEditorFragment : Fragment() {
                     studentGender.text.toString(),
                     requireArguments().getString(STUDENT_CLASS)
                 )
-                val isIdInDatabase = studentDatabaseEditorFragmentViewModel.checkIfStudentIdInDatabase(studentData)
-                val isIdInTempData = studentDatabaseEditorFragmentViewModel.checkIfStudentIdInTempStudentsData(studentData)
+                val isIdInDatabase = studentDatabaseEditorFragmentViewModel.isStudentIdInDatabase(studentData)
+                val isIdInTempData = studentDatabaseEditorFragmentViewModel.isStudentIdInTempStudentsData(studentData)
                 if(isIdInDatabase || isIdInTempData){
                     displayStudentDataExistDialog(studentData)
                 }else{
@@ -145,6 +131,15 @@ class StudentDatabaseEditorFragment : Fragment() {
             }
 
         }
+    }
+
+    private fun displayStudentDataExistDialog(studentData: StudentData) {
+        val alertDialog = AlertDialog.Builder(requireContext())
+        alertDialog.apply {
+            setMessage("${requireContext().resources.getString(R.string.id)} ${studentData.studentId} ${requireContext().resources.getString(R.string.already_exists)}")
+            setPositiveButton(requireContext().resources.getString(R.string.ok)){_, _ ->
+            }
+        }.create().show()
     }
 
     private fun clearInputFields() {
@@ -166,7 +161,6 @@ class StudentDatabaseEditorFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-//        title = intent.getStringExtra("title")
     }
 
     override fun onStop() {
