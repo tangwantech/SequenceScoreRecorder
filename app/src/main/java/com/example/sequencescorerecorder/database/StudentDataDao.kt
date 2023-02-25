@@ -1,6 +1,7 @@
 package com.example.sequencescorerecorder.database
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -14,11 +15,11 @@ interface StudentDataDao {
 
 //    updates a student in database at id
     @Update()
-    fun updateStudent(studentData: StudentData)
+    fun updateStudent(studentData: StudentData): Int?
 
 //    get a student from database with studentId
     @Query("SELECT * FROM student_data_table WHERE student_id LIKE :studentId")
-    fun getStudentById(studentId: String?): StudentData
+    fun getStudentById(studentId: String?): StudentData?
 
     //    get all students from database with studentClass
     @Query("SELECT * FROM student_data_table WHERE student_class LIKE :studentClass")
@@ -35,4 +36,10 @@ interface StudentDataDao {
 //    clears the entire database
     @Query("DELETE FROM student_data_table")
     fun deleteAllStudents()
+
+    @Query("SELECT * FROM STUDENT_DATA_TABLE")
+    fun getAllStudents(): List<StudentData>
+
+    @Delete()
+    fun deleteStudent(studentData: StudentData): Int?
 }

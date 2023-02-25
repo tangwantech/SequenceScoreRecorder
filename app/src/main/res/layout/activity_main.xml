@@ -9,42 +9,28 @@
     android:layout_marginStart="14dp"
     android:layout_marginEnd="14dp">
 
-    <androidx.cardview.widget.CardView
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/btnCardViewDatabase"
-        android:layout_marginTop="14dp"
-        android:gravity="center"
-        app:cardCornerRadius="8dp">
+        android:layout_height="wrap_content"
+        android:minHeight="54dp"
+        android:id="@+id/btnDatabase"
+        android:text="Student database"
+        android:layout_marginTop="@dimen/margin_8"
+        android:textAllCaps="true"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton">
 
-        <TextView
-            android:id="@+id/tvDatabase"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Database"
-            android:textColor="@color/design_default_color_on_primary"
-            android:background="@drawable/card_background"/>
+    </Button>
 
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:id="@+id/btnCardViewSequenceEditor"
-        android:layout_marginTop="14dp"
-        android:gravity="center"
-        app:cardCornerRadius="8dp">
+        android:layout_height="wrap_content"
+        android:minHeight="54dp"
+        android:id="@+id/btnSequenceEditor"
+        android:layout_marginTop="@dimen/margin_8"
+        android:text="Sequence editor"
+        android:textAllCaps="true"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton">
 
-        <TextView
-            android:id="@+id/tvSequenceEditor"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="Sequence editor"
-            android:textColor="@color/design_default_color_on_primary"
-            android:background="@drawable/card_background"/>
-
-    </androidx.cardview.widget.CardView>
+    </Button>
 
 </LinearLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/tvIdToDelete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Id: 1244"
+        android:textAllCaps="true"
+        android:paddingLeft="@dimen/margin_24"
+        android:paddingRight="@dimen/margin_24"/>
+    <TextView
+        android:id="@+id/tvNameToDelete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Name:Tangwan Elice"
+        android:textAllCaps="true"
+        android:paddingLeft="@dimen/margin_24"
+        android:paddingRight="@dimen/margin_24"/>
+
+</LinearLayout>

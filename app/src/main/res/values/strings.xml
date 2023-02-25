@@ -8,5 +8,17 @@
         <item>Form 1A</item>
         <item>Form 1B</item>
         <item>Form 1Bil</item>
+        <item>Form 4Arts</item>
+        <item>Form 5sc</item>
+        <item>Lower sixth S1</item>
+        <item>Lower sixth S2</item>
+        <item>Lower sixth S3</item>
+        <item>Lower sixth S4</item>
+        <item>Upper sixth S1</item>
+        <item>Upper sixth S2</item>
+        <item>Upper sixth S3</item>
+        <item>Upper sixth S4</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

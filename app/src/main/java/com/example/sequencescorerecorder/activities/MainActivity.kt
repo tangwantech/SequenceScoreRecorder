@@ -2,16 +2,15 @@ package com.example.sequencescorerecorder.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.TextView
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import com.example.sequencescorerecorder.R
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var btnCardViewDataBase: CardView
-    private lateinit var btnCardViewSequenceEditor: CardView
-    private lateinit var tvDatabase: TextView
-    private lateinit var tvSequenceEditor: TextView
+    private lateinit var btnStudentDatabase: Button
+    private lateinit var btnSequenceEditor: Button
+//    private lateinit var tvDatabase: TextView
+//    private lateinit var tvSequenceEditor: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -21,31 +20,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        btnCardViewDataBase = findViewById(R.id.btnCardViewDatabase)
-        btnCardViewSequenceEditor = findViewById(R.id.btnCardViewSequenceEditor)
-        tvDatabase = findViewById(R.id.tvDatabase)
-        tvSequenceEditor = findViewById(R.id.tvSequenceEditor)
+        btnStudentDatabase = findViewById(R.id.btnDatabase)
+        btnSequenceEditor = findViewById(R.id.btnSequenceEditor)
+//        tvDatabase = findViewById(R.id.tvDatabase)
+//        tvSequenceEditor = findViewById(R.id.tvSequenceEditor)
     }
 
     private fun setViewListeners() {
-        btnCardViewDataBase.setOnClickListener {
+        btnStudentDatabase.setOnClickListener {
             gotoDatabaseActivity()
         }
 
-        btnCardViewSequenceEditor.setOnClickListener {
+        btnSequenceEditor.setOnClickListener {
             gotoSequenceEditor()
         }
     }
 
     private fun gotoDatabaseActivity() {
-        val intent = Intent(this, SequenceDatabaseActivity::class.java)
-       intent.putExtra("title", tvDatabase.text.toString())
+        val intent = Intent(this, StudentDatabaseActivity::class.java)
+       intent.putExtra("title", btnStudentDatabase.text.toString())
         startActivity(intent)
     }
 
     private fun gotoSequenceEditor() {
         val intent = Intent(this, StudentScoreActivity::class.java)
-        intent.putExtra("title", tvSequenceEditor.text.toString())
+        intent.putExtra("title", btnSequenceEditor.text.toString())
         startActivity(intent)
     }
 }

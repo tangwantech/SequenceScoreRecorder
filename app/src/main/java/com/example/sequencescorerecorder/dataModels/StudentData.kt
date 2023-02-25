@@ -12,14 +12,14 @@ data class StudentData(
     @ColumnInfo(name="student_id")
     var studentId: String? = null,
 
-    @ColumnInfo(name = "student_class")
-    var studentClass: String? = null,
-
     @ColumnInfo(name = "student_name")
     var studentName: String? = null,
 
-    @ColumnInfo(name = "sex")
-    var sex: String? = null,
+    @ColumnInfo(name = "student_gender")
+    var studentGender: String? = null,
+
+    @ColumnInfo(name = "student_class")
+    var studentClass: String? = null,
 
     @ColumnInfo(name = "score_seq1")
     var scoreSeq1: Int = 0,

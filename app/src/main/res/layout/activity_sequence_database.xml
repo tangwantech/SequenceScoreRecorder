@@ -5,7 +5,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.SequenceDatabaseActivity">
-    <include layout="@layout/add_new_student_layout"/>
+    tools:context=".activities.StudentDatabaseActivity">
+    <FrameLayout
+        android:id="@+id/studentDbFragmentHolder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

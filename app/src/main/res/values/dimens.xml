@@ -6,4 +6,15 @@
     <dimen name="margin_14">14dp</dimen>
     <dimen name="margin_24">24dp</dimen>
     <dimen name="margin_32">32dp</dimen>
+
+    <dimen name="headerHeight">36dp</dimen>
+
+    <dimen name="text_size_8">8sp</dimen>
+    <dimen name="text_size_10">10sp</dimen>
+    <dimen name="text_size_12">12sp</dimen>
+    <dimen name="text_size_16">16sp</dimen>
+    <dimen name="text_size_20">20sp</dimen>
+
+    <dimen name="minimum_button_width">50dp</dimen>
+    <dimen name="minimum_button_height">36dp</dimen>
 </resources>

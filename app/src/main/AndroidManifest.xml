@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SequenceScoreRecorder"
+        android:theme="@style/Theme.MyCustomStyle"
         tools:targetApi="31">
         <activity
             android:name=".activities.StudentScoreActivity"
@@ -20,7 +20,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".activities.SequenceDatabaseActivity"
+            android:name=".activities.StudentDatabaseActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

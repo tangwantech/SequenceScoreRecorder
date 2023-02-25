@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/margin_4"
+    android:layout_marginBottom="@dimen/margin_4"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/studentId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ID: 12345"
+        android:textSize="@dimen/text_size_16"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:id="@+id/studentName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Name: Tangwan Elice"
+        android:textSize="@dimen/text_size_16"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/studentId"/>
+    <TextView
+        android:id="@+id/studentGender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Gender: M"
+        app:layout_constraintTop_toBottomOf="@id/studentName"/>
+    <TextView
+        android:id="@+id/studentClass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Class: Form 1A"
+        app:layout_constraintTop_toBottomOf="@id/studentGender"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
