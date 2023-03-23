@@ -9,11 +9,12 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sequencescorerecorder.R
+import com.example.sequencescorerecorder.dataModels.StudentData
 import com.example.sequencescorerecorder.dataModels.StudentIdAndNameData
 
 class StudentDbHomeRecyclerAdapter(
     private val context: Context,
-    private val studentIdAndNameData: List<StudentIdAndNameData>,
+    private val studentIdAndNameData: ArrayList<StudentData>,
     private val homeRecyclerItemsClickListener: OnHomeRecyclerItemsClickListener
 ) : RecyclerView.Adapter<StudentDbHomeRecyclerAdapter.ViewHolder>() {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -45,13 +46,17 @@ class StudentDbHomeRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.tvStudentId.text = "ID: ${studentIdAndNameData[position].studentId}"
-        holder.tvStudentName.text = "Name: ${studentIdAndNameData[position].studentName}"
+        if(studentIdAndNameData.isNotEmpty()){
+            holder.tvStudentId.text = "ID: ${studentIdAndNameData[position].studentId}"
+            holder.tvStudentName.text = "Name: ${studentIdAndNameData[position].studentName}"
+        }
+
     }
 
     override fun getItemCount(): Int {
         return studentIdAndNameData.size
     }
+
 
     interface OnHomeRecyclerItemsClickListener {
         fun onModifyButtonClicked(position: Int)

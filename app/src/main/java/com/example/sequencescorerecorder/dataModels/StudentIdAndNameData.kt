@@ -1,3 +1,3 @@
 package com.example.sequencescorerecorder.dataModels
 
-data class StudentIdAndNameData(val studentId: String, val studentName: String)
+data class StudentIdAndNameData(var studentId: String, var studentName: String)

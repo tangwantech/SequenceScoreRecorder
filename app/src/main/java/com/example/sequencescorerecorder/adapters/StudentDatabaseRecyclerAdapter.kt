@@ -34,7 +34,7 @@ class StudentDatabaseRecyclerAdapter(private val context: Context, private val l
             holder.studentId.text = "ID: ${listStudentData[position].studentId}"
             holder.studentName.text = "Name: ${listStudentData[position].studentName}"
             holder.studentGender.text = "Gender: ${ listStudentData[position].studentGender }"
-            holder.studentClass.text = "Class: ${listStudentData[position].studentClass}"
+            holder.studentClass.text = "Class: ${listStudentData[position].currentClass}"
         }
 
     }

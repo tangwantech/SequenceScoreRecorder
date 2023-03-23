@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutScoreListItem"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/value_50">
+    <TextView
+        android:id="@+id/tvStudentNumber"
+        android:layout_width="0dp"
+        android:layout_weight="0.1"
+        android:layout_height="match_parent"
+        android:text="1"
+        android:gravity="center_vertical"
+        android:layout_marginEnd="@dimen/margin_4"/>
+    <TextView
+        android:id="@+id/tvStudentName"
+        android:layout_width="0dp"
+        android:layout_weight="0.7"
+        android:layout_height="match_parent"
+        android:text="Tangwan Elice Fomunab"
+        android:textAllCaps="true"
+        android:gravity="center_vertical"
+        android:layout_marginEnd="@dimen/margin_4"/>
+    <TextView
+        android:id="@+id/tvStudentScore"
+        android:layout_width="0dp"
+        android:layout_weight="0.2"
+        android:layout_height="match_parent"
+        android:text="20.0"
+        android:gravity="center_vertical"/>
+
+</LinearLayout>

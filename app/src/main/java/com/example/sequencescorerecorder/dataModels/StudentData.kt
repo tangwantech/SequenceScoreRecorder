@@ -9,6 +9,9 @@ data class StudentData(
     @PrimaryKey(autoGenerate = true)
     var id: Int? = 0,
 
+    @ColumnInfo(name="student_school")
+    var studentSchool: String? = null,
+
     @ColumnInfo(name="student_id")
     var studentId: String? = null,
 
@@ -18,25 +21,12 @@ data class StudentData(
     @ColumnInfo(name = "student_gender")
     var studentGender: String? = null,
 
-    @ColumnInfo(name = "student_class")
-    var studentClass: String? = null,
+    @ColumnInfo(name = "current_class")
+    var currentClass: String? = null,
 
-    @ColumnInfo(name = "score_seq1")
-    var scoreSeq1: Int = 0,
+    @ColumnInfo(name= "current_academic_year")
+    var currentAcademicYear: String? = null,
 
-    @ColumnInfo(name = "score_seq2")
-    var scoreSeq2: Int = 0,
-
-    @ColumnInfo(name = "score_seq3")
-    var scoreSeq3: Int = 0,
-
-    @ColumnInfo(name = "score_seq4")
-    var scoreSeq4: Int = 0,
-
-    @ColumnInfo(name = "score_seq5")
-    var scoreSeq5: Int = 0,
-
-    @ColumnInfo(name = "score_seq6")
-    var scoreSeq6: Int = 0,
-
-)
+    @ColumnInfo(name = "academic_years")
+    var academicYears: List<AcademicYear>
+    )

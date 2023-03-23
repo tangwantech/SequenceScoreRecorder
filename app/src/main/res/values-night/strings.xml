@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="student_database_manager">Student database manager</string>
-    <string name="sequence_scores_manager">Sequence scores manager</string>
-    <string name="id">ID:</string>
-    <string name="name">Name:</string>
-    <string name="gender">Gender:</string>
-    <string name="_class">Class:</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="students_database">Student database</string>
+    <string name="score_sheets_manager">Score sheets manager</string>
+    <string name="id">ID</string>
+    <string name="name">Name</string>
+    <string name="gender">Gender</string>
+    <string name="_class">Class</string>
     <string name="student">Student</string>
     <string name="cancel">Cancel</string>
     <string name="modify_data">Modify data</string>
@@ -17,8 +18,51 @@
     <string name="clear_current_list">Clear current list</string>
     <string name="_continue">Continue</string>
     <string name="delete">delete</string>
+    <string name="add">Add</string>
     <string name="clear_database">Clear database</string>
     <string name="message_to_clear_database">This action will permanently erase all students data in database</string>
+    <string name="database_erased_successfully">Database was erased successfully</string>
+    <string name="finish">Finish</string>
+    <string name="select_student_gender">Select student gender</string>
+    <string name="enter_student_name">Enter student Name</string>
+    <string name="enter_student_id">Enter student id</string>
+    <string name="validate">Validate</string>
+    <string name="select_class">Select class</string>
+    <string name="select_sequence">Select sequence</string>
+    <string name="sequence">Sequence</string>
+    <string name="fill_marks">Fill marks</string>
+    <string name="select_academic_year">Select academic year</string>
+    <string name="select_school">Select school</string>
+    <string name="exit">Exit</string>
+    <string name="refresh">Refresh</string>
+    <string name="select_subject">Select subject</string>
+    <string name="enter_score">Enter score</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <string name="sn">SN</string>
+    <string name="score">Score</string>
+    <string name="update">Update</string>
+    <string name="academic_year">Academic year</string>
+    <string name="score_sheet">score sheet</string>
+    <string name="offered">Offered</string>
+    <string name="save">Save</string>
+
+    <string-array name="sort_options">
+        <item>ID</item>
+        <item>Name</item>
+    </string-array>
+
+    <string-array name="schools">
+        <item>GBHS Koutaba</item>
+        <item>GBHS Foumbot</item>
+    </string-array>
+
+    <string-array name="academic_years">
+        <item>2022–2023</item>
+        <item>2023–2024</item>
+        <item>2024–2025</item>
+        <item>2025–2026</item>
+    </string-array>
 
     <string-array name="gender">
         <item>M</item>
@@ -40,4 +84,18 @@
         <item>Upper sixth S4</item>
     </string-array>
 
+    <string-array name="subjects">
+        <item>Biology</item>
+        <item>Human Biology</item>
+        <item>Chemistry</item>
+    </string-array>
+
+    <string-array name="sequences">
+        <item>First sequence</item>
+        <item>Second sequence</item>
+        <item>Third sequence</item>
+        <item>Fourth sequence</item>
+        <item>Fifth sequence</item>
+        <item>Sixth sequence</item>
+    </string-array>
 </resources>

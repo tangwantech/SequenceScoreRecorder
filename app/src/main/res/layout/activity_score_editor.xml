@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.ScoreEditorActivity"
+    android:paddingLeft="@dimen/margin_14"
+    android:paddingRight="@dimen/margin_14"
+    android:paddingTop="@dimen/margin_4">
+
+    <TextView
+        android:id="@+id/tvSequenceName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="First Sequence"
+        android:gravity="center_vertical"
+        android:textStyle="bold"/>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_2"
+        android:layout_marginTop="@dimen/margin_8"/>
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="@dimen/margin_4">
+
+            <TextView
+                android:id="@+id/tvStudentName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/text_size_16"
+                android:textStyle="bold"
+                android:textAllCaps="true"/>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/enter_score"
+                android:layout_marginBottom="@dimen/margin_8"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:endIconMode="clear_text">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputStudentScore"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end">
+                <Button
+                    android:id="@+id/btnPrevious"
+                    android:layout_width="wrap_content"
+                    android:minWidth="@dimen/value_50"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/value_36"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:text="@string/previous"
+                    android:layout_marginStart="@dimen/margin_4"
+                    android:textSize="@dimen/text_size_12"/>
+                <Button
+                    android:id="@+id/btnNext"
+                    android:layout_width="wrap_content"
+                    android:minWidth="@dimen/value_50"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/value_36"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:text="@string/next"
+                    android:layout_marginStart="@dimen/margin_4"
+                    android:textSize="@dimen/text_size_12"/>
+
+                <Button
+                    android:id="@+id/btnUpdate"
+                    android:layout_width="wrap_content"
+                    android:minWidth="@dimen/value_50"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/value_36"
+                    android:text="@string/update"
+                    android:textSize="@dimen/text_size_12"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_2"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/score_sheet_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvScoreSheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -18,24 +18,25 @@
             android:id="@+id/btnsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <Button
                 android:id="@+id/btnClearDatabase"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="@dimen/minimum_button_width"
+                android:minWidth="@dimen/value_50"
                 android:minHeight="50dp"
                 android:text="Clear database"
                 android:textSize="@dimen/text_size_12"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/btnNewStudent"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_marginEnd="@dimen/margin_12"/>
+                android:layout_marginEnd="@dimen/margin_4"/>
 
             <Button
                 android:id="@+id/btnNewStudent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="@dimen/minimum_button_width"
+                android:minWidth="@dimen/value_50"
                 android:minHeight="50dp"
                 android:text="Add student"
                 android:textSize="@dimen/text_size_12"
@@ -43,6 +44,46 @@
                 app:layout_constraintTop_toTopOf="parent"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|end"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/margin_4"
+                android:gravity="center_vertical"
+                android:text="Sort by" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutSort"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_4"
+                android:layout_marginRight="@dimen/margin_8"
+                android:layout_marginBottom="@dimen/margin_8">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteSort"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnRefresh"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/value_50"
+                android:minHeight="50dp"
+                android:text="@string/refresh"
+                android:textSize="@dimen/text_size_12" />
+        </LinearLayout>
 
         <com.google.android.material.divider.MaterialDivider
             android:id="@+id/hDivider"

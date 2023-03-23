@@ -11,16 +11,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right">
+        android:gravity="end">
         <Button
             android:id="@+id/btnClearCurrentList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/clear_current_list"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/idTextInputLayout"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginEnd="@dimen/margin_12"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
     </LinearLayout>
     <LinearLayout
@@ -32,7 +28,7 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter student id">
+            android:hint="@string/enter_student_id">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/studentId"
                 android:inputType="phone"
@@ -49,7 +45,7 @@
             android:layout_height="wrap_content"
 
             android:layout_marginTop="@dimen/margin_4"
-            android:hint="Enter student Name">
+            android:hint="@string/enter_student_name">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/studentName"
                 android:inputType="textPersonName"
@@ -65,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_4"
-            android:hint="Select student gender">
+            android:hint="@string/select_student_gender">
             <AutoCompleteTextView
                 android:id="@+id/studentGender"
                 android:inputType="none"
@@ -83,7 +79,7 @@
             android:id="@+id/btnFinish"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Finish"
+            android:text="@string/finish"
             app:layout_constraintRight_toLeftOf="@id/btnAdd"
             android:layout_marginEnd="@dimen/margin_12"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
@@ -92,7 +88,7 @@
             android:id="@+id/btnAdd"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Add"
+            android:text="@string/add"
             app:layout_constraintEnd_toEndOf="parent"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

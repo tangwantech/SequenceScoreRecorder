@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sequencescorerecorder.R
 import com.example.sequencescorerecorder.adapters.StudentDatabaseRecyclerAdapter
-import com.example.sequencescorerecorder.dataModels.StudentData
 import com.example.sequencescorerecorder.database.StudentDatabase
 import com.example.sequencescorerecorder.viewModels.StudentDatabaseEditorFragmentViewModel
 import com.google.android.material.textfield.TextInputEditText
@@ -35,10 +34,24 @@ class StudentDatabaseEditorFragment : Fragment() {
     private lateinit var btnClearCurrentList: Button
     private lateinit var onRequestToNavigateToStudentDataBaseHomeListener: OnRequestToNavigateToStudentDataBaseHomeListener
 
+
+    companion object {
+
+        fun newInstance(schoolIndex: Int, academicYearIndex: Int, studentClass: String) = StudentDatabaseEditorFragment().apply {
+            val bundle = Bundle().apply {
+                putInt("schoolIndex", schoolIndex)
+                putInt("academicYearIndex", academicYearIndex)
+                putString(STUDENT_CLASS, studentClass)
+            }
+
+            arguments = bundle
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        studentDatabaseEditorFragmentViewModel = ViewModelProvider(this)[StudentDatabaseEditorFragmentViewModel::class.java]
-        studentDatabaseEditorFragmentViewModel.initDatabase(StudentDatabase.getStudentDatabase(requireContext()))
+
     }
 
     override fun onAttach(context: Context) {
@@ -58,10 +71,24 @@ class StudentDatabaseEditorFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViewModel()
         initViews(view)
         setupViewAdapters()
         setupViewListeners()
         setupViewObservers()
+
+    }
+
+    private fun initViewModel(){
+        val schoolName = requireContext().resources.getStringArray(R.array.schools)[requireArguments().getInt("schoolIndex")]
+        val academicYear = requireContext().resources.getStringArray(R.array.academic_years)[requireArguments().getInt("academicYearIndex")]
+        studentDatabaseEditorFragmentViewModel = ViewModelProvider(this)[StudentDatabaseEditorFragmentViewModel::class.java]
+        studentDatabaseEditorFragmentViewModel.initDatabase(StudentDatabase.getStudentDatabase(requireContext()))
+        studentDatabaseEditorFragmentViewModel.setSchoolName(schoolName)
+        studentDatabaseEditorFragmentViewModel.setAcademicYear(academicYear)
+        studentDatabaseEditorFragmentViewModel.setStudentClass(requireArguments().getString(STUDENT_CLASS)!!)
+        studentDatabaseEditorFragmentViewModel.setStudentSubjects(requireContext().resources.getStringArray(R.array.subjects).toList())
+        studentDatabaseEditorFragmentViewModel.setSequences(requireContext().resources.getStringArray(R.array.sequences).toList())
 
     }
 
@@ -94,10 +121,12 @@ class StudentDatabaseEditorFragment : Fragment() {
     }
 
     private fun setupViewObservers() {
+
         studentDatabaseEditorFragmentViewModel.studentsDataToDisplay.observe(viewLifecycleOwner, Observer {
             val adapter = StudentDatabaseRecyclerAdapter(requireContext(), it)
             rvStudents.adapter = adapter
         })
+
     }
 
     private fun setupViewListeners() {
@@ -107,25 +136,23 @@ class StudentDatabaseEditorFragment : Fragment() {
         }
 
         btnFinish.setOnClickListener {
-            onDestroy()
             onRequestToNavigateToStudentDataBaseHomeListener.onRequestToNavigateToStudentDataBaseHome()
+            onDestroy()
+
         }
 
         btnAdd.setOnClickListener {
             if (studentId.text!!.isNotEmpty() && studentName.text!!.isNotEmpty() && studentGender.text.isNotEmpty()) {
-                val studentData = StudentData(
-                    null,
-                    studentId.text.toString(),
-                    studentName.text.toString(),
-                    studentGender.text.toString(),
-                    requireArguments().getString(STUDENT_CLASS)
-                )
-                val isIdInDatabase = studentDatabaseEditorFragmentViewModel.isStudentIdInDatabase(studentData)
-                val isIdInTempData = studentDatabaseEditorFragmentViewModel.isStudentIdInTempStudentsData(studentData)
+//
+                val isIdInDatabase = studentDatabaseEditorFragmentViewModel.isStudentIdInDatabase(studentId.text.toString())
+                val isIdInTempData = studentDatabaseEditorFragmentViewModel.isStudentIdInTempStudentsData(studentId.text.toString())
                 if(isIdInDatabase || isIdInTempData){
-                    displayStudentDataExistDialog(studentData)
+                    displayStudentDataExistDialog(studentId.text.toString())
                 }else{
-                    studentDatabaseEditorFragmentViewModel.addStudentDataToTempList(studentData)
+                    studentDatabaseEditorFragmentViewModel.addStudentData(
+                        studentId.text.toString(),
+                        studentName.text.toString(),
+                        studentGender.text.toString(),)
                     clearInputFields()
                 }
             }
@@ -133,10 +160,10 @@ class StudentDatabaseEditorFragment : Fragment() {
         }
     }
 
-    private fun displayStudentDataExistDialog(studentData: StudentData) {
+    private fun displayStudentDataExistDialog(studentId: String) {
         val alertDialog = AlertDialog.Builder(requireContext())
         alertDialog.apply {
-            setMessage("${requireContext().resources.getString(R.string.id)} ${studentData.studentId} ${requireContext().resources.getString(R.string.already_exists)}")
+            setMessage("${requireContext().resources.getString(R.string.id)} $studentId ${requireContext().resources.getString(R.string.already_exists)}")
             setPositiveButton(requireContext().resources.getString(R.string.ok)){_, _ ->
             }
         }.create().show()
@@ -168,15 +195,11 @@ class StudentDatabaseEditorFragment : Fragment() {
         super.onStop()
     }
 
-    companion object {
+//    override fun onDestroy() {
+//
+//        super.onDestroy()
+//    }
 
-        fun newInstance(studentClass: String) = StudentDatabaseEditorFragment().apply {
-            val bundle = Bundle()
-            bundle.putString(STUDENT_CLASS, studentClass)
-            arguments = bundle
-        }
-
-    }
 }
 interface OnRequestToNavigateToStudentDataBaseHomeListener{
     fun onRequestToNavigateToStudentDataBaseHome()
