@@ -14,9 +14,9 @@
         android:id="@+id/tvSequenceName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="First Sequence"
         android:gravity="center_vertical"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textSize="@dimen/text_size_16"/>
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"

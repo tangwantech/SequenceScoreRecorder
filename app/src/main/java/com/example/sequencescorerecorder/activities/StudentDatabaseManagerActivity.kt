@@ -7,10 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.sequencescorerecorder.R
-import com.example.sequencescorerecorder.fragments.OnRequestToNavigateToStudentDataBaseEditorListener
-import com.example.sequencescorerecorder.fragments.OnRequestToNavigateToStudentDataBaseHomeListener
-import com.example.sequencescorerecorder.fragments.StudentDatabaseEditorFragment
-import com.example.sequencescorerecorder.fragments.StudentDatabaseHomeFragment
+import com.example.sequencescorerecorder.fragments.*
 import com.example.sequencescorerecorder.viewModels.StudentDatabaseActivityViewModel
 
 // Container for and manages navigation to
@@ -19,7 +16,8 @@ import com.example.sequencescorerecorder.viewModels.StudentDatabaseActivityViewM
 
 class StudentDatabaseManagerActivity : AppCompatActivity(),
     OnRequestToNavigateToStudentDataBaseEditorListener,
-    OnRequestToNavigateToStudentDataBaseHomeListener{
+//    OnRequestToNavigateToStudentDataBaseHomeListener,
+    OnSortOrderChangeListener {
     private lateinit var pref: SharedPreferences
     private lateinit var studentDatabaseActivityViewModel: StudentDatabaseActivityViewModel
     private var currentFragmentIndex = 0
@@ -27,6 +25,7 @@ class StudentDatabaseManagerActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_student_database_manager)
+        pref = getSharedPreferences("StudentDatabaseManagerActivity", MODE_PRIVATE)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initViewModel()
         gotoHomeFragment()
@@ -47,9 +46,11 @@ class StudentDatabaseManagerActivity : AppCompatActivity(),
 
 
     private fun gotoHomeFragment() {
+        val sortIndex = pref.getInt("sortIndex", 0)
         val studentDatabaseHomeFragment = StudentDatabaseHomeFragment.newInstance(
             studentDatabaseActivityViewModel.getSchoolIndex(),
-            studentDatabaseActivityViewModel.getAcademicYearIndex()
+            studentDatabaseActivityViewModel.getAcademicYearIndex(),
+            sortIndex
         )
         replaceFragment(studentDatabaseHomeFragment, 0)
     }
@@ -59,6 +60,7 @@ class StudentDatabaseManagerActivity : AppCompatActivity(),
         val transaction = supportFragmentManager.beginTransaction()
         transaction.apply {
             replace(R.id.studentDbFragmentHolder, fragment)
+            addToBackStack(null)
             commit()
         }
     }
@@ -91,7 +93,9 @@ class StudentDatabaseManagerActivity : AppCompatActivity(),
         if (currentFragmentIndex == 0) {
             this.finish()
         } else {
-            gotoHomeFragment()
+            currentFragmentIndex -= 1
+            supportFragmentManager.popBackStack()
+
         }
     }
 
@@ -99,8 +103,16 @@ class StudentDatabaseManagerActivity : AppCompatActivity(),
         gotoStudentDatabaseEditorFragment(studentClass)
     }
 
-    override fun onRequestToNavigateToStudentDataBaseHome() {
-        gotoHomeFragment()
+//    override fun onRequestToNavigateToStudentDataBaseHome() {
+//        gotoHomeFragment()
+//    }
+
+    override fun onSortOrderChanged(index: Int) {
+        val editor = pref.edit()
+        editor.apply {
+            putInt("sortIndex", index)
+            apply()
+        }
     }
 
 //    override fun onRequestSchoolAndAcademicYearBundle(): LiveData<Bundle> {

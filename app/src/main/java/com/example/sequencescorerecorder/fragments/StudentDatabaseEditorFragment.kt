@@ -28,12 +28,10 @@ class StudentDatabaseEditorFragment : Fragment() {
     private lateinit var studentId: TextInputEditText
     private lateinit var studentName: TextInputEditText
     private lateinit var studentGender: AutoCompleteTextView
-    private lateinit var btnFinish: Button
+    private lateinit var btnSave: Button
     private lateinit var btnAdd: Button
     private lateinit var rvStudents: RecyclerView
     private lateinit var btnClearCurrentList: Button
-    private lateinit var onRequestToNavigateToStudentDataBaseHomeListener: OnRequestToNavigateToStudentDataBaseHomeListener
-
 
     companion object {
 
@@ -47,18 +45,6 @@ class StudentDatabaseEditorFragment : Fragment() {
             arguments = bundle
         }
 
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if(context is OnRequestToNavigateToStudentDataBaseHomeListener){
-            onRequestToNavigateToStudentDataBaseHomeListener = context
-        }
     }
 
     override fun onCreateView(
@@ -86,6 +72,7 @@ class StudentDatabaseEditorFragment : Fragment() {
         studentDatabaseEditorFragmentViewModel.initDatabase(StudentDatabase.getStudentDatabase(requireContext()))
         studentDatabaseEditorFragmentViewModel.setSchoolName(schoolName)
         studentDatabaseEditorFragmentViewModel.setAcademicYear(academicYear)
+        studentDatabaseEditorFragmentViewModel.setAcademicYearIndex(requireArguments().getInt("academicYearIndex"))
         studentDatabaseEditorFragmentViewModel.setStudentClass(requireArguments().getString(STUDENT_CLASS)!!)
         studentDatabaseEditorFragmentViewModel.setStudentSubjects(requireContext().resources.getStringArray(R.array.subjects).toList())
         studentDatabaseEditorFragmentViewModel.setSequences(requireContext().resources.getStringArray(R.array.sequences).toList())
@@ -96,7 +83,7 @@ class StudentDatabaseEditorFragment : Fragment() {
         studentId = view.findViewById(R.id.studentId)
         studentName = view.findViewById(R.id.studentName)
         studentGender = view.findViewById(R.id.studentGender)
-        btnFinish = view.findViewById(R.id.btnFinish)
+        btnSave = view.findViewById(R.id.btnSave)
         btnAdd = view.findViewById(R.id.btnAdd)
         rvStudents = view.findViewById(R.id.rvStudentDatabase)
         btnClearCurrentList = view.findViewById(R.id.btnClearCurrentList)
@@ -135,9 +122,8 @@ class StudentDatabaseEditorFragment : Fragment() {
             studentDatabaseEditorFragmentViewModel.clearCurrentStudentDataList()
         }
 
-        btnFinish.setOnClickListener {
-            onRequestToNavigateToStudentDataBaseHomeListener.onRequestToNavigateToStudentDataBaseHome()
-            onDestroy()
+        btnSave.setOnClickListener {
+            studentDatabaseEditorFragmentViewModel.writeStudentsDataToDatabase()
 
         }
 
@@ -186,21 +172,4 @@ class StudentDatabaseEditorFragment : Fragment() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onStop() {
-        studentDatabaseEditorFragmentViewModel.writeStudentsDataToDatabase()
-        super.onStop()
-    }
-
-//    override fun onDestroy() {
-//
-//        super.onDestroy()
-//    }
-
-}
-interface OnRequestToNavigateToStudentDataBaseHomeListener{
-    fun onRequestToNavigateToStudentDataBaseHome()
 }

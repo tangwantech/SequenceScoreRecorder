@@ -6,15 +6,59 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.SequenceClassSubjectSelectorActivity"
-    android:paddingTop="@dimen/margin_8"
-    android:paddingRight="@dimen/margin_14"
-    android:paddingLeft="@dimen/margin_14">
-<!--    <TextView-->
-<!--        android:id="@+id/tvAcademicYear"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="Academic year: "-->
-<!--        android:textSize="@dimen/text_size_16"-->
-<!--        android:textStyle="bold"/>-->
+    android:paddingTop="@dimen/margin_16"
+    android:paddingLeft="@dimen/margin_14"
+    android:paddingRight="@dimen/margin_14">
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/select_sequence">
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteSelectSequence"
+            android:inputType="none"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/select_class">
+
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteSelectClass"
+            android:inputType="none"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/select_subject">
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteSelectSubject"
+            android:inputType="none"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end">
+        <Button
+            android:id="@+id/btnOk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ok"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_marginStart="@dimen/margin_8"
+            android:enabled="false"/>
+
+    </LinearLayout>
 
 </LinearLayout>

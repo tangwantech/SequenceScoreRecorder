@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="students_database">Student database</string>
+    <string name="students_database">Students database</string>
     <string name="score_sheets_manager">Score sheets manager</string>
+    <string name="subjects_manager">Subjects manager</string>
     <string name="id">ID</string>
     <string name="name">Name</string>
     <string name="gender">Gender</string>
@@ -68,6 +69,62 @@
         <item>M</item>
         <item>F</item>
     </string-array>
+
+    <string-array name="form1_streams">
+        <item>Form 1A</item>
+        <item>Form 1B</item>
+        <item>Form 1C</item>
+        <item>Form 1D</item>
+        <item>Form 1Bil</item>
+    </string-array>
+    <string-array name="form2_streams">
+        <item>Form 2A</item>
+        <item>Form 2B</item>
+        <item>Form 2C</item>
+        <item>Form 2D</item>
+        <item>Form 2Bil</item>
+    </string-array>
+    <string-array name="form3_streams">
+        <item>Form 3A</item>
+        <item>Form 3B</item>
+        <item>Form 3C</item>
+        <item>Form 3D</item>
+        <item>Form 3Bil</item>
+    </string-array>
+    <string-array name="form4_streams">
+        <item>Form 4 Art</item>
+        <item>Form 4 Science</item>
+    </string-array>
+
+    <string-array name="form5_streams">
+        <item>Form 5 Art</item>
+        <item>Form 5 Science</item>
+    </string-array>
+
+    <string-array name="lowersixth_science_streams">
+        <item>Lower sixth S1</item>
+        <item>Lower sixth S2</item>
+        <item>Lower sixth S3</item>
+        <item>Lower sixth S4</item>
+    </string-array>
+    <string-array name="lowersixth_art_streams">
+        <item>Lower sixth A1</item>
+        <item>Lower sixth A2</item>
+        <item>Lower sixth A3</item>
+        <item>Lower sixth A4</item>
+    </string-array>
+    <string-array name="uppersixth_science_streams">
+        <item>Upper sixth S1</item>
+        <item>Upper sixth S2</item>
+        <item>Upper sixth S3</item>
+        <item>Upper sixth S4</item>
+    </string-array>
+    <string-array name="uppersixth_art_streams">
+        <item>Upper sixth A1</item>
+        <item>Upper sixth A2</item>
+        <item>Upper sixth A3</item>
+        <item>Upper sixth A4</item>
+    </string-array>
     <string-array name="classes">
         <item>Form 1A</item>
         <item>Form 1B</item>
@@ -78,10 +135,18 @@
         <item>Lower sixth S2</item>
         <item>Lower sixth S3</item>
         <item>Lower sixth S4</item>
+        <item>Lower sixth A1</item>
+        <item>Lower sixth A2</item>
+        <item>Lower sixth A3</item>
+        <item>Lower sixth A4</item>
         <item>Upper sixth S1</item>
         <item>Upper sixth S2</item>
         <item>Upper sixth S3</item>
         <item>Upper sixth S4</item>
+        <item>Upper sixth A1</item>
+        <item>Upper sixth A2</item>
+        <item>Upper sixth A3</item>
+        <item>Upper sixth A4</item>
     </string-array>
 
     <string-array name="subjects">

@@ -54,6 +54,7 @@ class ScoreEditorActivityViewModel : ViewModel() {
                 tempStudents.forEach { studentData ->
                     tempStudents2.add(studentData)
                 }
+                tempStudents2.sortBy { studentData -> studentData.studentName }
                 _students.value = tempStudents2
                 _areStudentsDataAvailable.value = tempStudents2.isNotEmpty()
 
@@ -75,7 +76,7 @@ class ScoreEditorActivityViewModel : ViewModel() {
             if (className == academicYearData.className && academicYearData.subjects!![subjectIndex].doesSubject) {
                 val score =
                     academicYearData.subjects[subjectIndex].sequenceScores[sequenceIndex].score
-                val studentScore = StudentScore(it.studentId!!, it.studentName!!, score)
+                val studentScore = StudentScore(it.studentId!!, it.studentName!!, score, academicYearData.studentClassNumber)
                 tempStudentsScoreList.add(studentScore)
                 tempStudentDataList.add(it)
 
@@ -86,7 +87,7 @@ class ScoreEditorActivityViewModel : ViewModel() {
         _studentsScoreList.value = tempStudentsScoreList
         _studentsDataToUse.value = tempStudentDataList
         initFirstCurrentAndLastStudentIndexes()
-//        return tempStudentsScoreList : ArrayList<StudentScore>
+
     }
 
     fun incrementCurrentStudentIndex(): Int {

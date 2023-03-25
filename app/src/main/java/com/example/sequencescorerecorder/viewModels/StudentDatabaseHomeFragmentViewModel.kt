@@ -12,7 +12,7 @@ import kotlinx.coroutines.*
 class StudentDatabaseHomeFragmentViewModel : ViewModel() {
     private lateinit var database: StudentDatabase
     private val _schoolName = MutableLiveData<String>()
-    val schoolName: LiveData<String> = _schoolName
+//    val schoolName: LiveData<String> = _schoolName
 
     private val _academicYearIndex = MutableLiveData<Int>()
     val academicYearIndex: LiveData<Int> = _academicYearIndex
@@ -37,6 +37,9 @@ class StudentDatabaseHomeFragmentViewModel : ViewModel() {
     private val _sortOptionIndex = MutableLiveData<Int>()
     val sortOptionIndex: LiveData<Int> = _sortOptionIndex
 
+    private val _selectedClass = MutableLiveData<String?>()
+//    private var _selectedClass:String? = null
+
 
     fun initDatabase(database: StudentDatabase){
         this.database = database
@@ -49,22 +52,41 @@ class StudentDatabaseHomeFragmentViewModel : ViewModel() {
     fun setAcademicYearIndex(index: Int){
         this._academicYearIndex.value = index
     }
+
+    fun setSelectedClass(selectedClass: String?){
+        this._selectedClass.value = selectedClass
+//        println(_selectedClass.value)
+    }
     private fun getAllStudentsFromDatabaseInCurrentSchool(){
         viewModelScope.launch(Dispatchers.IO){
             val studentsData = database.studentDataDao().getStudentsBySchool(_schoolName.value)
             val tempStudentsData = ArrayList<StudentData>()
-            var sorted: List<StudentData>? = null
-            sorted = if(_sortOptionIndex.value!! == 0){
-                studentsData.sortedBy{studentData -> studentData.studentId }
-            }else{
-                studentsData.sortedBy{studentData -> studentData.studentName }
-            }
-            sorted.forEachIndexed { _, studentData ->
+
+            studentsData.forEachIndexed { _, studentData ->
                 tempStudentsData.add(studentData)
             }
+            tempStudentsData.sortBy { studentData -> studentData.studentName }
 
             withContext(Dispatchers.Main){
+                tempStudentsData.forEachIndexed { index, studentData ->
+//                    println(_selectedClass.value)
+//                    println(studentData.academicYears[_academicYearIndex.value!!].className)
+                    if(studentData.academicYears[_academicYearIndex.value!!].className == _selectedClass.value){
+
+                        studentData.academicYears[_academicYearIndex.value!!].studentClassNumber = (index + 1).toString()
+                        tempStudentsData[index] = studentData
+                    }
+                }
+
+
+                if(_sortOptionIndex.value!! == 0){
+                    tempStudentsData.sortBy { studentData ->  studentData.studentId}
+                }else{
+                    tempStudentsData.sortBy { studentData -> studentData.studentName }
+                }
+
                 _allStudentData.value = tempStudentsData
+                println(_allStudentData.value)
                 updateTotalNumberOfStudents(tempStudentsData)
             }
         }
@@ -120,12 +142,17 @@ class StudentDatabaseHomeFragmentViewModel : ViewModel() {
         }
     }
 
-    fun setSortOption(options: List<String>) {
-        _sortOptions.value = options
-    }
-
     fun setSortOptionIndex(index: Int){
         _sortOptionIndex.value = index
+    }
+
+    fun updateDatabase(){
+        CoroutineScope(Dispatchers.IO).launch{
+            _allStudentData.value?.forEach {
+                database.studentDataDao().updateStudent(it)
+            }
+        }
+
     }
 
 

@@ -35,7 +35,7 @@ class SubjectCheckListRecyclerAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if(subjectStates.isNotEmpty()){
-            holder.tvStudentNumber.text = "${position + 1}"
+            holder.tvStudentNumber.text = "${subjectStates[position].studentClassNumber}"
             holder.tvStudentName.text = "${subjectStates[position].studentName}"
             holder.checkboxSubject.isChecked = subjectStates[position].offered
         }

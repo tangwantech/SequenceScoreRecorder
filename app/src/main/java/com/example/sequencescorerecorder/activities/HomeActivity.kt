@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.sequencescorerecorder.R
@@ -19,14 +18,18 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var dialogView: View
     private lateinit var autoCompleteSchool: AutoCompleteTextView
     private lateinit var autoCompleteAcademicYear: AutoCompleteTextView
-    private lateinit var positiveBtn: Button
+    private lateinit var btnOk: Button
+    private lateinit var btnExit: Button
 
     private lateinit var pref: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        pref = getSharedPreferences(resources.getString(R.string.app_name), MODE_PRIVATE)
+//        pref = getSharedPreferences(resources.getString(R.string.app_name), MODE_PRIVATE)
         initViewModel()
+        initActivityViews()
+        setupViewAdapters()
+        setupActivityViewListeners()
         setupViewObservers()
     }
 
@@ -34,16 +37,14 @@ class HomeActivity : AppCompatActivity() {
         homeActivityViewModel = ViewModelProvider(this)[HomeActivityViewModel::class.java]
 
     }
-
-    private fun initDialogView(){
-        dialogView = layoutInflater.inflate(R.layout.school_selection, null)
-        autoCompleteSchool = dialogView.findViewById(R.id.autoCompleteSchool)
-        autoCompleteAcademicYear = dialogView.findViewById(R.id.autoCompleteAcademicYear)
-
-
+    private fun initActivityViews(){
+        autoCompleteSchool = findViewById(R.id.autoCompleteSchool)
+        autoCompleteAcademicYear = findViewById(R.id.autoCompleteAcademicYear)
+        btnOk = findViewById(R.id.btnOk)
+        btnExit = findViewById(R.id.btnExit)
     }
 
-    private fun setupDialogViewAdapters(){
+    private fun setupViewAdapters(){
         val autoCompleteSchoolAdapter = ArrayAdapter<String>(this, R.layout.drop_down_item, resources.getStringArray(R.array.schools))
         autoCompleteSchool.setAdapter(autoCompleteSchoolAdapter)
 
@@ -51,7 +52,7 @@ class HomeActivity : AppCompatActivity() {
         autoCompleteAcademicYear.setAdapter(autoCompleteAcademicYearAdapter)
     }
 
-    private fun setupDialogViewListeners(){
+    private fun setupActivityViewListeners(){
         autoCompleteSchool.setOnItemClickListener { _, _, index, _ ->
             homeActivityViewModel.setSchoolIndex(index)
         }
@@ -59,39 +60,25 @@ class HomeActivity : AppCompatActivity() {
         autoCompleteAcademicYear.setOnItemClickListener { _, _, index, _ ->
             homeActivityViewModel.setAcademicYearIndex(index)
         }
+
+        btnOk.setOnClickListener {
+            gotoMainActivity()
+        }
+
+        btnExit.setOnClickListener {
+            exitActivity()
+        }
     }
 
     private fun setupViewObservers(){
         homeActivityViewModel.areSchoolAndAcademicYearSelected.observe(this, Observer {
-            positiveBtn.isEnabled = it
+            btnOk.isEnabled = it
         })
-    }
-
-    private fun displaySchoolSelectorDialog(){
-
-        initDialogView()
-        setupDialogViewAdapters()
-        setupDialogViewListeners()
-        val selectSchoolDialog = AlertDialog.Builder(this).apply {
-            setView(dialogView)
-            setPositiveButton("OK"){_, _ ->
-                gotoMainActivity()
-            }
-            setNegativeButton(resources.getString(R.string.exit)){_, _ ->
-                exitActivity()
-            }
-        }.create()
-        selectSchoolDialog.show()
-        positiveBtn = selectSchoolDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        positiveBtn.isEnabled = false
-
-
     }
 
     override fun onResume() {
         super.onResume()
         title = resources.getString(R.string.app_name)
-        displaySchoolSelectorDialog()
     }
 
     private fun exitActivity(){

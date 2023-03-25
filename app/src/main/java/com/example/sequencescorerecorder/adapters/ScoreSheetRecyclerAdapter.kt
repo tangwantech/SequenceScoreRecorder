@@ -37,7 +37,9 @@ class ScoreSheetRecyclerAdapter(private val context: Context, private val studen
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.tvStudentNumber.text = "${position + 1}"
+        println(studentsScoreList[position].classNumber)
+        holder.tvStudentNumber.text = studentsScoreList[position].classNumber
+//        holder.tvStudentNumber.text = "${position + 1}"
         holder.tvStudentName.text = studentsScoreList[position].studentName
 
         if(studentsScoreList[position].studentScore == null){

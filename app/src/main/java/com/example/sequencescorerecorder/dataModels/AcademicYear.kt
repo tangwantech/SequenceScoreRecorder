@@ -6,6 +6,7 @@ import com.google.gson.Gson
 data class AcademicYear(
     var academicYear: String? = null,
     var className: String? = null,
+    var studentClassNumber: String? = null,
     val subjects: ArrayList<SubjectData>? = null
 )
 

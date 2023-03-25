@@ -2,11 +2,13 @@ package com.example.sequencescorerecorder.fragments
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -20,7 +22,7 @@ import com.example.sequencescorerecorder.viewModels.StudentDatabaseHomeFragmentV
 import com.google.android.material.textfield.TextInputEditText
 
 class StudentDatabaseHomeFragment : Fragment(),
-    StudentDbHomeRecyclerAdapter.OnHomeRecyclerItemsClickListener {
+    StudentDbHomeRecyclerAdapter.OnHomeRecyclerItemsClickListener{
 
     private lateinit var studentDatabaseHomeFragmentViewModel: StudentDatabaseHomeFragmentViewModel
     private lateinit var btnNewStudent: Button
@@ -30,33 +32,35 @@ class StudentDatabaseHomeFragment : Fragment(),
     private lateinit var tvTotalNumberOfStudents: TextView
     private lateinit var btnClearDatabase: Button
     private lateinit var btnRefresh: Button
-    private lateinit var autoCompletesort: AutoCompleteTextView
+    private lateinit var autoCompleteSort: AutoCompleteTextView
 
     private lateinit var onRequestToNavigateToStudentDataBaseEditorListener: OnRequestToNavigateToStudentDataBaseEditorListener
+    private lateinit var onSortOrderChangeListener: OnSortOrderChangeListener
+
+    private lateinit var pref: SharedPreferences
 
     companion object {
 
-        fun newInstance(schoolIndex: Int, academicYearIndex: Int): Fragment {
+        fun newInstance(schoolIndex: Int, academicYearIndex: Int, sortIndex: Int): Fragment {
             val studentDatabaseHomeFragment = StudentDatabaseHomeFragment()
 
             val bundle = Bundle().apply {
                 putInt("schoolIndex", schoolIndex)
                 putInt("academicYearIndex", academicYearIndex)
+                putInt("sortIndex", sortIndex)
             }
             studentDatabaseHomeFragment.arguments = bundle
             return studentDatabaseHomeFragment
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnRequestToNavigateToStudentDataBaseEditorListener) {
             onRequestToNavigateToStudentDataBaseEditorListener = context
+        }
+        if (context is OnSortOrderChangeListener){
+            onSortOrderChangeListener = context
         }
 
     }
@@ -71,6 +75,9 @@ class StudentDatabaseHomeFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        pref = requireContext().getSharedPreferences("StudentDatabaseManagerActivity",
+            AppCompatActivity.MODE_PRIVATE
+        )
         initViewModel()
         initViews(view)
         setupRecyclerView()
@@ -87,12 +94,13 @@ class StudentDatabaseHomeFragment : Fragment(),
                 requireContext()
             )
         )
-//        println(requireArguments().getInt("academicYearIndex"))
         val schoolName =
             requireContext().resources.getStringArray(R.array.schools)[requireArguments().getInt("schoolIndex")]
         studentDatabaseHomeFragmentViewModel.setSchoolName(schoolName)
         studentDatabaseHomeFragmentViewModel.setAcademicYearIndex(requireArguments().getInt("academicYearIndex"))
-        studentDatabaseHomeFragmentViewModel.setSortOptionIndex(0)
+        studentDatabaseHomeFragmentViewModel.setSortOptionIndex(requireArguments().getInt("sortIndex"))
+        studentDatabaseHomeFragmentViewModel.setSelectedClass(pref.getString("lastSelectedClass", null))
+
     }
 
     private fun initViews(view: View) {
@@ -103,7 +111,7 @@ class StudentDatabaseHomeFragment : Fragment(),
         btnClearDatabase = view.findViewById(R.id.btnClearDatabase)
         rvLayout = view.findViewById(R.id.rvLayout)
         btnRefresh = view.findViewById(R.id.btnRefresh)
-        autoCompletesort = view.findViewById(R.id.autoCompleteSort)
+        autoCompleteSort = view.findViewById(R.id.autoCompleteSort)
 
     }
 
@@ -116,10 +124,12 @@ class StudentDatabaseHomeFragment : Fragment(),
             displayMessageToClearDatabase()
         }
 
-        autoCompletesort.setOnItemClickListener { _, view, i, l ->
-            println("index: $i")
+        autoCompleteSort.setOnItemClickListener { _, _, i, _ ->
+//            println("index: $i")
             studentDatabaseHomeFragmentViewModel.setSortOptionIndex(i)
             studentDatabaseHomeFragmentViewModel.refreshDatabase()
+            onSortOrderChangeListener.onSortOrderChanged(i)
+
         }
 
         btnNewStudent.setOnClickListener {
@@ -135,6 +145,15 @@ class StudentDatabaseHomeFragment : Fragment(),
                 resources.getStringArray(R.array.classes)
             )
             studentClass.setAdapter(studentClassesAdapter)
+            studentClass.setOnItemClickListener { _, _, _, _ ->
+
+                studentDatabaseHomeFragmentViewModel.setSelectedClass(studentClass.text.toString())
+                val editor = pref.edit()
+                editor.apply {
+                    putString("lastSelectedClass", studentClass.text.toString())
+                    apply()
+                }
+            }
 
             classSelectionDialog.apply {
                 setView(classSelectionView)
@@ -167,12 +186,7 @@ class StudentDatabaseHomeFragment : Fragment(),
                 LinearLayoutManager.VERTICAL
             )
         )
-//        val adapter = StudentDbHomeRecyclerAdapter(
-//            requireContext(),
-//            studentDatabaseHomeFragmentViewModel.allStudentIdsAndNamesData.value!!,
-//            this
-//        )
-//        rvStudentDbHomeRecycler.adapter = adapter
+//
 
     }
 
@@ -183,8 +197,8 @@ class StudentDatabaseHomeFragment : Fragment(),
             requireContext().resources.getStringArray(R.array.sort_options)
         )
 
-        autoCompletesort.setText(requireContext().resources.getStringArray(R.array.sort_options)[studentDatabaseHomeFragmentViewModel.sortOptionIndex.value!!])
-        autoCompletesort.setAdapter(autoSortAdapter)
+        autoCompleteSort.setText(requireContext().resources.getStringArray(R.array.sort_options)[studentDatabaseHomeFragmentViewModel.sortOptionIndex.value!!])
+        autoCompleteSort.setAdapter(autoSortAdapter)
 
     }
 
@@ -268,6 +282,11 @@ class StudentDatabaseHomeFragment : Fragment(),
         super.onResume()
         requireActivity().title = requireContext().resources.getString(R.string.students_database)
         studentDatabaseHomeFragmentViewModel.refreshDatabase()
+    }
+
+    override fun onDestroy() {
+        studentDatabaseHomeFragmentViewModel.updateDatabase()
+        super.onDestroy()
     }
 
 
@@ -404,5 +423,9 @@ class StudentDatabaseHomeFragment : Fragment(),
 }
 
 interface OnRequestToNavigateToStudentDataBaseEditorListener {
-    fun navigateToStudentDataBaseEditor(name: String)
+    fun navigateToStudentDataBaseEditor(studentClass: String)
+}
+
+interface OnSortOrderChangeListener{
+    fun onSortOrderChanged(index: Int)
 }

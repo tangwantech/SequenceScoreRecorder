@@ -42,6 +42,7 @@ class SubjectManagerViewModel: ViewModel() {
                         }
                     }
                 }
+                tempStudentData.sortBy { studentData ->  studentData.studentName}
                 _studentsData.value = tempStudentData
                 setStudentSubjectStatesData(academicYearIndex)
             }
@@ -54,7 +55,8 @@ class SubjectManagerViewModel: ViewModel() {
             val studentName = studentData.studentName
             val subject = studentData.academicYears[academicYearIndex].subjects!![studentSubjectIndex!!].subjectName
             val offered = studentData.academicYears[academicYearIndex].subjects!![studentSubjectIndex!!].doesSubject
-            tempStudentSubjectStates.add(StudentSubjectStateData(studentName!!, subject, offered))
+            val studentClassNumber = studentData.academicYears[academicYearIndex].studentClassNumber!!
+            tempStudentSubjectStates.add(StudentSubjectStateData(studentClassNumber, studentName!!, subject, offered))
 
         }
         _studentSubjectStates.value = tempStudentSubjectStates

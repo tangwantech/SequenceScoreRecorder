@@ -3,7 +3,7 @@ package com.example.sequencescorerecorder.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
+import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
@@ -15,18 +15,21 @@ import com.example.sequencescorerecorder.viewModels.SequenceClassSubjectSelector
 
 class SequenceClassSubjectSelectorActivity : AppCompatActivity() {
     private lateinit var viewModel: SequenceClassSubjectSelectorViewModel
-    private lateinit var positiveButton: Button
     private lateinit var autoSequence: AutoCompleteTextView
     private lateinit var autoClass: AutoCompleteTextView
     private lateinit var autoSubject: AutoCompleteTextView
-//    private lateinit var tvAcademicYear: TextView
+    private lateinit var btnOk: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sequence_class_subject_selector)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setActivityTitle()
         initViewModel()
-//        initActivityViews()
+        initActivityViews()
+        setupViewAdapters()
+        setupActivityViewListeners()
+        setupViewObservers()
     }
     private fun setActivityTitle(){
         title = resources.getString(R.string.score_sheets_manager)
@@ -36,15 +39,11 @@ class SequenceClassSubjectSelectorActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[SequenceClassSubjectSelectorViewModel::class.java]
     }
 
-//    private fun initActivityViews(){
-//        tvAcademicYear = findViewById(R.id.tvAcademicYear)
-//        val academicYear = resources.getStringArray(R.array.academic_years)[intent.getIntExtra("academicYearIndex", 0)]
-//        tvAcademicYear.text = "Academic year: $academicYear"
-//    }
-    private fun initDialogViews(view: View){
-        autoSequence = view.findViewById(R.id.autoCompleteSelectSequence)
-        autoClass = view.findViewById(R.id.autoCompleteSelectClass)
-        autoSubject = view.findViewById(R.id.autoCompleteSelectSubject)
+    private fun initActivityViews(){
+        autoSequence = findViewById(R.id.autoCompleteSelectSequence)
+        autoClass = findViewById(R.id.autoCompleteSelectClass)
+        autoSubject = findViewById(R.id.autoCompleteSelectSubject)
+        btnOk = findViewById(R.id.btnOk)
     }
 
     private fun setupViewAdapters(){
@@ -65,7 +64,7 @@ class SequenceClassSubjectSelectorActivity : AppCompatActivity() {
 
     }
 
-    private fun setupDialogViewListeners(){
+    private fun setupActivityViewListeners(){
         autoSequence.setOnItemClickListener { _, _, i, _ ->
             viewModel.setSequenceIndex(i)
         }
@@ -77,43 +76,33 @@ class SequenceClassSubjectSelectorActivity : AppCompatActivity() {
         autoSubject.setOnItemClickListener { _, _, i, _ ->
             viewModel.setSubjectIndex(i)
         }
+        btnOk.setOnClickListener {
+            gotoScoreEditorActivity()
+        }
     }
 
     private fun setupViewObservers(){
         viewModel.allFieldsSelected.observe(this, Observer {
-            positiveButton.isEnabled = it
+            btnOk.isEnabled = it
         })
-    }
-
-    private fun showSelectSequenceDialog(){
-        val view = layoutInflater.inflate(R.layout.sequence_class_subject_selector_dialog, null)
-        initDialogViews(view)
-        setupViewAdapters()
-        setupDialogViewListeners()
-        setupViewObservers()
-
-        val alertDialog = AlertDialog.Builder(this).apply {
-            setView(view)
-            setPositiveButton("OK"){_, _ ->
-                gotoScoreEditorActivity()
-            }
-            setNegativeButton(resources.getString(R.string.exit)){_, _ ->
-                exit()
-            }
-            setCancelable(false)
-        }.create()
-        alertDialog.show()
-        positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        positiveButton.isEnabled = false
-    }
-    private fun exit(){
-        finish()
     }
 
     override fun onResume() {
         super.onResume()
-        showSelectSequenceDialog()
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                exitActivity()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun exitActivity() {
+        finish()
     }
 
     private fun gotoScoreEditorActivity(){
