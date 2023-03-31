@@ -17,6 +17,9 @@ interface StudentDataDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updateStudent(studentData: StudentData): Int?
 
+//    @Query("UPDATE student_data_table SET :Where LIKE :studentId")
+//    fun updateStudent(studentData: StudentData, studentId: String?): Int?
+
 //    get a student from database with studentId
     @Query("SELECT * FROM student_data_table WHERE student_id LIKE :studentId")
     fun getStudentById(studentId: String?): StudentData?
@@ -26,7 +29,7 @@ interface StudentDataDao {
     fun getStudentsBySchool(studentSchool: String?): List<StudentData>
 
 //    removes a student with studentId from database
-    @Query("DELETE FROM student_data_table WHERE student_id LIKE :studentId")
+    @Query("DELETE  FROM student_data_table WHERE student_id LIKE :studentId")
     fun deleteStudent(studentId: String?)
 
 //    removes a student from database with id
@@ -34,7 +37,7 @@ interface StudentDataDao {
 //    fun deleteStudentByClass(studentClass: String?)
 
 //    clears the entire database
-    @Query("DELETE FROM student_data_table")
+    @Query("DELETE  FROM student_data_table")
     fun deleteAllStudents()
 
     @Query("SELECT * FROM STUDENT_DATA_TABLE")

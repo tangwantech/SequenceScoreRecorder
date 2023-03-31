@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sequencescorerecorder.R
 import com.example.sequencescorerecorder.adapters.StudentDbHomeRecyclerAdapter
+import com.example.sequencescorerecorder.dataModels.StudentIdAndNameData
 import com.example.sequencescorerecorder.database.StudentDatabase
 import com.example.sequencescorerecorder.viewModels.StudentDatabaseHomeFragmentViewModel
 import com.google.android.material.textfield.TextInputEditText
@@ -24,7 +25,7 @@ import com.google.android.material.textfield.TextInputEditText
 class StudentDatabaseHomeFragment : Fragment(),
     StudentDbHomeRecyclerAdapter.OnHomeRecyclerItemsClickListener{
 
-    private lateinit var studentDatabaseHomeFragmentViewModel: StudentDatabaseHomeFragmentViewModel
+    private lateinit var viewModel: StudentDatabaseHomeFragmentViewModel
     private lateinit var btnNewStudent: Button
     private lateinit var rvStudentDbHomeRecycler: RecyclerView
     private lateinit var rvLayout: LinearLayout
@@ -33,6 +34,8 @@ class StudentDatabaseHomeFragment : Fragment(),
     private lateinit var btnClearDatabase: Button
     private lateinit var btnRefresh: Button
     private lateinit var autoCompleteSort: AutoCompleteTextView
+    private lateinit var tvSchool: TextView
+    private lateinit var tvAcademicYear: TextView
 
     private lateinit var onRequestToNavigateToStudentDataBaseEditorListener: OnRequestToNavigateToStudentDataBaseEditorListener
     private lateinit var onSortOrderChangeListener: OnSortOrderChangeListener
@@ -80,26 +83,25 @@ class StudentDatabaseHomeFragment : Fragment(),
         )
         initViewModel()
         initViews(view)
-        setupRecyclerView()
-        setupViewAdapters()
         setupViewListeners()
         setupViewObservers()
     }
 
     private fun initViewModel() {
-        studentDatabaseHomeFragmentViewModel =
+        viewModel =
             ViewModelProvider(this)[StudentDatabaseHomeFragmentViewModel::class.java]
-        studentDatabaseHomeFragmentViewModel.initDatabase(
+        viewModel.initDatabase(
             StudentDatabase.getStudentDatabase(
                 requireContext()
             )
         )
         val schoolName =
             requireContext().resources.getStringArray(R.array.schools)[requireArguments().getInt("schoolIndex")]
-        studentDatabaseHomeFragmentViewModel.setSchoolName(schoolName)
-        studentDatabaseHomeFragmentViewModel.setAcademicYearIndex(requireArguments().getInt("academicYearIndex"))
-        studentDatabaseHomeFragmentViewModel.setSortOptionIndex(requireArguments().getInt("sortIndex"))
-        studentDatabaseHomeFragmentViewModel.setSelectedClass(pref.getString("lastSelectedClass", null))
+        viewModel.setSchoolName(schoolName)
+        viewModel.setAcademicYear(resources.getStringArray(R.array.academic_years)[requireArguments().getInt("academicYearIndex")])
+        viewModel.setAcademicYearIndex(requireArguments().getInt("academicYearIndex"))
+        viewModel.setSortOptionIndex(requireArguments().getInt("sortIndex"))
+        viewModel.setSelectedClass(pref.getString("lastSelectedClass", null))
 
     }
 
@@ -113,12 +115,17 @@ class StudentDatabaseHomeFragment : Fragment(),
         btnRefresh = view.findViewById(R.id.btnRefresh)
         autoCompleteSort = view.findViewById(R.id.autoCompleteSort)
 
+        tvSchool = view.findViewById(R.id.tvSchool)
+        tvSchool.text = "${resources.getString(R.string.school)}: ${viewModel.schoolName.value}"
+        tvAcademicYear = view.findViewById(R.id.tvAcademicYear)
+        tvAcademicYear.text = "${resources.getString(R.string.academic_year)}: ${viewModel.academicYear.value}"
+
     }
 
     private fun setupViewListeners() {
 
         btnRefresh.setOnClickListener {
-            studentDatabaseHomeFragmentViewModel.refreshDatabase()
+            viewModel.refreshDatabase()
         }
         btnClearDatabase.setOnClickListener {
             displayMessageToClearDatabase()
@@ -126,8 +133,8 @@ class StudentDatabaseHomeFragment : Fragment(),
 
         autoCompleteSort.setOnItemClickListener { _, _, i, _ ->
 //            println("index: $i")
-            studentDatabaseHomeFragmentViewModel.setSortOptionIndex(i)
-            studentDatabaseHomeFragmentViewModel.refreshDatabase()
+            viewModel.setSortOptionIndex(i)
+            viewModel.refreshDatabase()
             onSortOrderChangeListener.onSortOrderChanged(i)
 
         }
@@ -147,7 +154,7 @@ class StudentDatabaseHomeFragment : Fragment(),
             studentClass.setAdapter(studentClassesAdapter)
             studentClass.setOnItemClickListener { _, _, _, _ ->
 
-                studentDatabaseHomeFragmentViewModel.setSelectedClass(studentClass.text.toString())
+                viewModel.setSelectedClass(studentClass.text.toString())
                 val editor = pref.edit()
                 editor.apply {
                     putString("lastSelectedClass", studentClass.text.toString())
@@ -175,7 +182,7 @@ class StudentDatabaseHomeFragment : Fragment(),
 
     }
 
-    private fun setupRecyclerView() {
+    private fun setupRecyclerView(studentIdAndNameDataList: ArrayList<StudentIdAndNameData>) {
 
         val layoutMan = LinearLayoutManager(requireContext())
         layoutMan.orientation = LinearLayoutManager.VERTICAL
@@ -186,57 +193,53 @@ class StudentDatabaseHomeFragment : Fragment(),
                 LinearLayoutManager.VERTICAL
             )
         )
+        val adapter = StudentDbHomeRecyclerAdapter(
+            requireContext(),
+            studentIdAndNameDataList,
+            this
+        )
+        rvStudentDbHomeRecycler.adapter = adapter
 //
 
     }
 
-    private fun setupViewAdapters() {
+    private fun setupAutoCompleteViews() {
+        autoCompleteSort.setText(requireContext().resources.getStringArray(R.array.sort_options)[viewModel.sortOptionIndex.value!!])
         val autoSortAdapter = ArrayAdapter<String>(
             requireContext(),
             R.layout.drop_down_item,
             requireContext().resources.getStringArray(R.array.sort_options)
         )
-
-        autoCompleteSort.setText(requireContext().resources.getStringArray(R.array.sort_options)[studentDatabaseHomeFragmentViewModel.sortOptionIndex.value!!])
         autoCompleteSort.setAdapter(autoSortAdapter)
 
     }
 
     private fun setupViewObservers() {
 
-        studentDatabaseHomeFragmentViewModel.totalNumberOfStudents.observe(
+        viewModel.totalNumberOfStudents.observe(
             viewLifecycleOwner,
             Observer {
                 tvTotalNumberOfStudents.text = it.toString()
             })
 
-        studentDatabaseHomeFragmentViewModel.allStudentData.observe(
+        viewModel.studentsIdAndNameData.observe(
             viewLifecycleOwner,
-            Observer { allStudentsIdsAndNamesData ->
-//                println("allStudentsIdsAndNamesData: $allStudentsIdsAndNamesData")
-                allStudentsIdsAndNamesData?.let {
+            Observer { studentsIdAndNameDataList ->
+//                println("studentsIdAndNameDataList: $studentsIdAndNameDataList")
+                studentsIdAndNameDataList?.let {
                     if (it.isNotEmpty()) {
-                        rvLayout.visibility = View.VISIBLE
-                        tvNoDataAvailable.visibility = View.GONE
-                        btnClearDatabase.isEnabled = true
-                        val adapter = StudentDbHomeRecyclerAdapter(
-                            requireContext(),
-                            it,
-                            this
-                        )
-                        rvStudentDbHomeRecycler.adapter = adapter
-                        rvStudentDbHomeRecycler.adapter?.notifyDataSetChanged()
+                        showRecyclerView()
+                        setupRecyclerView(it)
+
                     } else {
-                        rvLayout.visibility = View.GONE
-                        tvNoDataAvailable.visibility = View.VISIBLE
-                        btnClearDatabase.isEnabled = false
+                        hideRecyclerView()
                     }
                 }
 
 
             })
 
-        studentDatabaseHomeFragmentViewModel.deletedItemPosition.observe(
+        viewModel.deletedItemPosition.observe(
             viewLifecycleOwner,
             Observer {
                 it?.let {
@@ -246,49 +249,57 @@ class StudentDatabaseHomeFragment : Fragment(),
                         Toast.LENGTH_LONG
                     ).show()
                     rvStudentDbHomeRecycler.adapter?.notifyItemRemoved(it)
+                    viewModel.resetDeletedItemPosition()
                 }
 
             })
 
-        studentDatabaseHomeFragmentViewModel.updatedItemPosition.observe(
-            viewLifecycleOwner,
-            Observer {
-                it?.let {
-                    Toast.makeText(
-                        requireContext(),
-                        requireContext().resources.getString(R.string.data_updated_successfully),
-                        Toast.LENGTH_LONG
-                    ).show()
-                    rvStudentDbHomeRecycler.adapter?.notifyItemChanged(it)
-                }
-            })
+        viewModel.updatedItemPosition.observe(viewLifecycleOwner, Observer {
+            Toast.makeText(
+                requireContext(),
+                requireContext().resources.getString(R.string.data_updated_successfully),
+                Toast.LENGTH_LONG
+            ).show()
+            rvStudentDbHomeRecycler.adapter?.notifyItemChanged(it!!)
+        })
 
-        studentDatabaseHomeFragmentViewModel.isClearDatabaseSuccessful.observe(
+        viewModel.isClearDatabaseSuccessful.observe(
             viewLifecycleOwner,
             Observer {
-                it?.let {
+                if(it){
+
+                    hideRecyclerView()
+                    println("Data cleared...")
+
                     Toast.makeText(
                         requireContext(),
                         requireContext().resources.getString(R.string.database_erased_successfully),
                         Toast.LENGTH_LONG
                     ).show()
-                    rvStudentDbHomeRecycler.adapter?.notifyDataSetChanged()
+                    viewModel.resetClearDatabaseSuccessful()
+
                 }
             })
+    }
+
+    private fun showRecyclerView(){
+        rvLayout.visibility = View.VISIBLE
+        tvNoDataAvailable.visibility = View.GONE
+        btnClearDatabase.isEnabled = true
+    }
+    private fun hideRecyclerView(){
+        rvLayout.visibility = View.GONE
+        tvNoDataAvailable.visibility = View.VISIBLE
+        btnClearDatabase.isEnabled = false
     }
 
 
     override fun onResume() {
         super.onResume()
         requireActivity().title = requireContext().resources.getString(R.string.students_database)
-        studentDatabaseHomeFragmentViewModel.refreshDatabase()
+        setupAutoCompleteViews()
+        viewModel.refreshDatabase()
     }
-
-    override fun onDestroy() {
-        studentDatabaseHomeFragmentViewModel.updateDatabase()
-        super.onDestroy()
-    }
-
 
     override fun onModifyButtonClicked(position: Int) {
         displayStudentDataToModifyDialog(position)
@@ -304,7 +315,7 @@ class StudentDatabaseHomeFragment : Fragment(),
     }
 
     private fun displayStudentDetailsDialog(position: Int) {
-        val studentData = studentDatabaseHomeFragmentViewModel.allStudentData.value!![position]
+        val studentData = viewModel.studentsDataCurrentAcademicYear.value!![position]
         val view = requireActivity().layoutInflater.inflate(R.layout.student_details, null)
 
         val studentId: TextView = view.findViewById(R.id.tvIdDetails)
@@ -320,7 +331,7 @@ class StudentDatabaseHomeFragment : Fragment(),
         studentGender.text =
             "${requireContext().resources.getString(R.string.gender)} ${studentData.studentGender}"
         studentClass.text =
-            "${requireContext().resources.getString(R.string._class)} ${studentData.currentClass}"
+            "${requireContext().resources.getString(R.string._class)} ${studentData.academicYear?.className}"
 
         val studentDetailsDialog = AlertDialog.Builder(requireContext())
         studentDetailsDialog.apply {
@@ -337,9 +348,9 @@ class StudentDatabaseHomeFragment : Fragment(),
         val tvNameToDelete: TextView = view.findViewById(R.id.tvNameToDelete)
 
         val studentId =
-            studentDatabaseHomeFragmentViewModel.allStudentData.value!![position].studentId
+            viewModel.studentsDataAllAcademicYears.value!![position].studentId
         val studentName =
-            studentDatabaseHomeFragmentViewModel.allStudentData.value!![position].studentName
+            viewModel.studentsDataAllAcademicYears.value!![position].studentName
 
         tvIdToDelete.text = "${requireContext().resources.getString(R.string.id)} $studentId"
         tvNameToDelete.text = "${requireContext().resources.getString(R.string.name)} $studentName"
@@ -349,7 +360,7 @@ class StudentDatabaseHomeFragment : Fragment(),
         deleteStudentDataDialog.apply {
             setView(view)
             setPositiveButton(requireContext().resources.getString(R.string.delete)) { _, _ ->
-                studentDatabaseHomeFragmentViewModel.deleteStudentDataAt(position)
+                viewModel.deleteStudentDataAt(position)
             }
             setNegativeButton(requireContext().resources.getString(R.string.cancel)) { _, _ ->
 
@@ -358,7 +369,7 @@ class StudentDatabaseHomeFragment : Fragment(),
     }
 
     private fun displayStudentDataToModifyDialog(position: Int) {
-        val oldStudentData = studentDatabaseHomeFragmentViewModel.allStudentData.value!![position]
+        val oldStudentData = viewModel.studentsDataAllAcademicYears.value!![position]
 //        println("Student data to update ${studentDatabaseHomeFragmentViewModel.allStudentData.value!![position]}")
         val view =
             requireActivity().layoutInflater.inflate(R.layout.item_to_modify_dialog_view, null)
@@ -393,7 +404,7 @@ class StudentDatabaseHomeFragment : Fragment(),
             setView(view)
             setPositiveButton(requireContext().resources.getString(R.string.ok)) { _, _ ->
 
-                studentDatabaseHomeFragmentViewModel.updateStudentData(
+                viewModel.updateStudentData(
                     position,
                     idToModify.text.toString(),
                     nameToModify.text.toString(),
@@ -409,15 +420,20 @@ class StudentDatabaseHomeFragment : Fragment(),
     }
 
     private fun displayMessageToClearDatabase() {
-        val alertDialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+        val alertDialog = AlertDialog.Builder(requireContext())
         alertDialog.apply {
             setTitle(requireContext().resources.getString(R.string.clear_database))
             setMessage(requireContext().resources.getString(R.string.message_to_clear_database))
             setPositiveButton(requireContext().resources.getString(R.string._continue)) { _, _ ->
-                studentDatabaseHomeFragmentViewModel.clearDatabase()
+                viewModel.clearDatabase()
             }
             setNegativeButton(requireContext().resources.getString(R.string.cancel)) { _, _ -> }
         }.create().show()
+    }
+
+    override fun onStop() {
+        viewModel.updateDatabase()
+        super.onStop()
     }
 
 }

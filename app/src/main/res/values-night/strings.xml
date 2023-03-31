@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="school">School</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="students_database">Students database</string>
     <string name="score_sheets_manager">Score sheets manager</string>
@@ -40,14 +41,17 @@
     <string name="enter_score">Enter score</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>
-    <string name="sn">SN</string>
+    <string name="cn">CN</string>
     <string name="score">Score</string>
     <string name="update">Update</string>
     <string name="academic_year">Academic year</string>
     <string name="score_sheet">score sheet</string>
     <string name="offered">Offered</string>
     <string name="save">Save</string>
-
+    <string name="sort_by">Sort by</string>
+    <string name="number_of_students">Number of students</string>
+    <string name="load">Load</string>
+    <string name="_new">New</string>
     <string-array name="sort_options">
         <item>ID</item>
         <item>Name</item>

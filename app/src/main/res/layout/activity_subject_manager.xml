@@ -51,12 +51,12 @@
             android:text="@string/save"
             android:enabled="false"/>
         <Button
-            android:id="@+id/btnOk"
+            android:id="@+id/btnLoad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/value_36"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:text="@string/ok"
+            android:text="@string/load"
             android:enabled="false"
             android:layout_marginStart="@dimen/margin_8"/>
 
@@ -68,6 +68,25 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="match_parent"
+            android:text="@string/number_of_students"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/tvNumberOfStudents"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="match_parent"
+            android:gravity="end"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_4"
         android:layout_marginBottom="@dimen/margin_4">
@@ -75,7 +94,7 @@
             android:layout_width="0dp"
             android:layout_weight="0.1"
             android:layout_height="match_parent"
-            android:text="@string/sn"
+            android:text="@string/cn"
             android:layout_marginEnd="@dimen/margin_4"
             android:layout_marginBottom="@dimen/margin_14"
             android:gravity="bottom"/>

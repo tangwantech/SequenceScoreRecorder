@@ -40,7 +40,7 @@ class HomeActivity : AppCompatActivity() {
     private fun initActivityViews(){
         autoCompleteSchool = findViewById(R.id.autoCompleteSchool)
         autoCompleteAcademicYear = findViewById(R.id.autoCompleteAcademicYear)
-        btnOk = findViewById(R.id.btnOk)
+        btnOk = findViewById(R.id.btnLoad)
         btnExit = findViewById(R.id.btnExit)
     }
 

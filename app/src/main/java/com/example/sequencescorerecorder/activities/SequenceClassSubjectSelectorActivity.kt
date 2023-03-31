@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.sequencescorerecorder.R
@@ -43,7 +42,7 @@ class SequenceClassSubjectSelectorActivity : AppCompatActivity() {
         autoSequence = findViewById(R.id.autoCompleteSelectSequence)
         autoClass = findViewById(R.id.autoCompleteSelectClass)
         autoSubject = findViewById(R.id.autoCompleteSelectSubject)
-        btnOk = findViewById(R.id.btnOk)
+        btnOk = findViewById(R.id.btnLoad)
     }
 
     private fun setupViewAdapters(){

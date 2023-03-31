@@ -1,6 +1,5 @@
 package com.example.sequencescorerecorder.fragments
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -24,11 +24,11 @@ import com.google.android.material.textfield.TextInputEditText
 private const val STUDENT_CLASS = "studentClass"
 class StudentDatabaseEditorFragment : Fragment() {
 
-    private lateinit var studentDatabaseEditorFragmentViewModel: StudentDatabaseEditorFragmentViewModel
+    private lateinit var viewModel: StudentDatabaseEditorFragmentViewModel
     private lateinit var studentId: TextInputEditText
     private lateinit var studentName: TextInputEditText
     private lateinit var studentGender: AutoCompleteTextView
-    private lateinit var btnSave: Button
+//    private lateinit var btnSave: Button
     private lateinit var btnAdd: Button
     private lateinit var rvStudents: RecyclerView
     private lateinit var btnClearCurrentList: Button
@@ -68,14 +68,15 @@ class StudentDatabaseEditorFragment : Fragment() {
     private fun initViewModel(){
         val schoolName = requireContext().resources.getStringArray(R.array.schools)[requireArguments().getInt("schoolIndex")]
         val academicYear = requireContext().resources.getStringArray(R.array.academic_years)[requireArguments().getInt("academicYearIndex")]
-        studentDatabaseEditorFragmentViewModel = ViewModelProvider(this)[StudentDatabaseEditorFragmentViewModel::class.java]
-        studentDatabaseEditorFragmentViewModel.initDatabase(StudentDatabase.getStudentDatabase(requireContext()))
-        studentDatabaseEditorFragmentViewModel.setSchoolName(schoolName)
-        studentDatabaseEditorFragmentViewModel.setAcademicYear(academicYear)
-        studentDatabaseEditorFragmentViewModel.setAcademicYearIndex(requireArguments().getInt("academicYearIndex"))
-        studentDatabaseEditorFragmentViewModel.setStudentClass(requireArguments().getString(STUDENT_CLASS)!!)
-        studentDatabaseEditorFragmentViewModel.setStudentSubjects(requireContext().resources.getStringArray(R.array.subjects).toList())
-        studentDatabaseEditorFragmentViewModel.setSequences(requireContext().resources.getStringArray(R.array.sequences).toList())
+        viewModel = ViewModelProvider(this)[StudentDatabaseEditorFragmentViewModel::class.java]
+        viewModel.initDatabase(StudentDatabase.getStudentDatabase(requireContext()))
+        viewModel.setSchoolName(schoolName)
+        viewModel.setAcademicYear(academicYear)
+        viewModel.setAcademicYearIndex(requireArguments().getInt("academicYearIndex"))
+        viewModel.setAcademicYearsCount(resources.getStringArray(R.array.academic_years).size)
+        viewModel.setStudentClass(requireArguments().getString(STUDENT_CLASS)!!)
+        viewModel.setStudentSubjects(requireContext().resources.getStringArray(R.array.subjects).toList())
+        viewModel.setSequences(requireContext().resources.getStringArray(R.array.sequences).toList())
 
     }
 
@@ -83,7 +84,7 @@ class StudentDatabaseEditorFragment : Fragment() {
         studentId = view.findViewById(R.id.studentId)
         studentName = view.findViewById(R.id.studentName)
         studentGender = view.findViewById(R.id.studentGender)
-        btnSave = view.findViewById(R.id.btnSave)
+//        btnSave = view.findViewById(R.id.btnSave)
         btnAdd = view.findViewById(R.id.btnAdd)
         rvStudents = view.findViewById(R.id.rvStudentDatabase)
         btnClearCurrentList = view.findViewById(R.id.btnClearCurrentList)
@@ -109,38 +110,58 @@ class StudentDatabaseEditorFragment : Fragment() {
 
     private fun setupViewObservers() {
 
-        studentDatabaseEditorFragmentViewModel.studentsDataToDisplay.observe(viewLifecycleOwner, Observer {
+        viewModel.studentsDataToDisplay.observe(viewLifecycleOwner, Observer {
             val adapter = StudentDatabaseRecyclerAdapter(requireContext(), it)
             rvStudents.adapter = adapter
+        })
+        viewModel.studentNameAndGender.observe(viewLifecycleOwner, Observer{
+            studentName.setText(it.name)
+            studentGender.setText(it.gender)
+        })
+
+        viewModel.idInExistingListDisplayed.observe(viewLifecycleOwner, Observer {
+            if(it != null){
+                btnAdd.isEnabled = false
+                displayStudentDataExistDialog(it)
+
+            }else{
+                btnAdd.isEnabled = true
+            }
         })
 
     }
 
     private fun setupViewListeners() {
 
+        studentId.doOnTextChanged { text, _, _, _ ->
+            viewModel.checkIdInDatabase(text.toString())
+        }
+
         btnClearCurrentList.setOnClickListener {
-            studentDatabaseEditorFragmentViewModel.clearCurrentStudentDataList()
+            viewModel.clearCurrentStudentDataList()
         }
 
-        btnSave.setOnClickListener {
-            studentDatabaseEditorFragmentViewModel.writeStudentsDataToDatabase()
-
-        }
+//        btnSave.setOnClickListener {
+//            viewModel.writeStudentsDataToDatabase()
+//
+//        }
 
         btnAdd.setOnClickListener {
             if (studentId.text!!.isNotEmpty() && studentName.text!!.isNotEmpty() && studentGender.text.isNotEmpty()) {
-//
-                val isIdInDatabase = studentDatabaseEditorFragmentViewModel.isStudentIdInDatabase(studentId.text.toString())
-                val isIdInTempData = studentDatabaseEditorFragmentViewModel.isStudentIdInTempStudentsData(studentId.text.toString())
-                if(isIdInDatabase || isIdInTempData){
-                    displayStudentDataExistDialog(studentId.text.toString())
-                }else{
-                    studentDatabaseEditorFragmentViewModel.addStudentData(
-                        studentId.text.toString(),
-                        studentName.text.toString(),
-                        studentGender.text.toString(),)
+
+                if(viewModel.indexOfStudentId.value != null){
+                        viewModel.updateOldStudentDataInDatabase(
+                            studentName.text.toString(),
+                            studentGender.text.toString()
+                        )
+                    }else{
+                        viewModel.addNewStudentData(
+                            studentId.text.toString(),
+                            studentName.text.toString(),
+                            studentGender.text.toString())
+                    }
+
                     clearInputFields()
-                }
             }
 
         }
@@ -170,6 +191,11 @@ class StudentDatabaseEditorFragment : Fragment() {
 
         }
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.writeStudentsDataToDatabase()
     }
 
 }

@@ -36,6 +36,7 @@ class SchoolActivity : AppCompatActivity() {
         schoolActivityViewModel = ViewModelProvider(this)[SchoolActivityViewModel::class.java]
         schoolActivityViewModel.setSchoolIndex(intent.getIntExtra("schoolIndex", 0))
         schoolActivityViewModel.setAcademicYearIndex(intent.getIntExtra("academicYearIndex", 0))
+//        println(intent.getIntExtra("academicYearIndex", 0))
     }
 
     private fun initViews() {
@@ -67,7 +68,7 @@ class SchoolActivity : AppCompatActivity() {
         intent.apply{
             putExtra("title", btnStudentDatabase.text.toString())
             putExtra("schoolIndex", schoolActivityViewModel.getSchoolIndex())
-            putExtra("academicYear", schoolActivityViewModel.getAcademicYearIndex())
+            putExtra("academicYearIndex", schoolActivityViewModel.getAcademicYearIndex())
         }
         startActivity(intent)
     }

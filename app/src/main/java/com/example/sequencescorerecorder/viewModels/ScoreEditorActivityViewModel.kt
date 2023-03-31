@@ -25,6 +25,15 @@ class ScoreEditorActivityViewModel : ViewModel() {
     private val _areStudentsDataAvailable = MutableLiveData<Boolean>()
     val areStudentsDataAvailable: LiveData<Boolean> = _areStudentsDataAvailable
 
+//    academicYearIndex: Int,
+//    className: String,
+//    sequenceIndex: Int,
+//    subjectIndex: Int
+    private val _academicYearIndex = MutableLiveData<Int>()
+    private val _className = MutableLiveData<String>()
+    private val _sequenceIndex = MutableLiveData<Int>()
+    private val _subjectIndex = MutableLiveData<Int>()
+
     private var currentStudentIndex: Int? = null
     private var firstStudentIndex: Int? = null
     private var lastStudentIndex: Int? = null
@@ -39,43 +48,62 @@ class ScoreEditorActivityViewModel : ViewModel() {
 
     private val _studentsDataToUse = MutableLiveData<ArrayList<StudentData>>()
 
+    private val _numberOfStudentsRegisteredSubject = MutableLiveData<Int>()
+    val numberOfStudentsRegisteredSubject: LiveData<Int> = _numberOfStudentsRegisteredSubject
 
     fun initDatabase(context: Context) {
         database = StudentDatabase.getStudentDatabase(context)
     }
+    fun setAcademicYearIndex(index: Int){
+        _academicYearIndex.value = index
+    }
+
+    fun setClassName(className: String){
+        _className.value = className
+    }
+
+    fun setSequenceIndex(index: Int){
+        _sequenceIndex.value = index
+    }
+
+    fun setSubjectIndex(index: Int){
+        _subjectIndex.value = index
+    }
 
 
-    fun getStudentsWhereSchool(schoolName: String) {
+
+    fun loadStudentsWhereSchool(schoolName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val tempStudents = database.studentDataDao().getStudentsBySchool(schoolName)
             withContext(Dispatchers.Main) {
                 val tempStudents2: ArrayList<StudentData> = ArrayList()
+                if(tempStudents.isNotEmpty()){
+                    tempStudents.forEach { studentData ->
+                        tempStudents2.add(studentData)
+                    }
+                    tempStudents2.sortBy { studentData -> studentData.studentName }
+                    _students.value = tempStudents2
 
-                tempStudents.forEach { studentData ->
-                    tempStudents2.add(studentData)
+                }else{
+                    _students.value = ArrayList()
                 }
-                tempStudents2.sortBy { studentData -> studentData.studentName }
-                _students.value = tempStudents2
                 _areStudentsDataAvailable.value = tempStudents2.isNotEmpty()
+                setStudentsScoreList()
 
             }
         }
 
     }
-    fun setStudentsScoreListAt(
-        academicYearIndex: Int,
-        className: String,
-        sequenceIndex: Int,
-        subjectIndex: Int
-    ){
+    private fun setStudentsScoreList(){
         val tempStudentsScoreList = ArrayList<StudentScore>()
         val tempStudentDataList = ArrayList<StudentData>()
         _students.value?.forEach {
-            val academicYearData = it.academicYears[academicYearIndex]
+            val academicYearData = it.academicYears[_academicYearIndex.value!!]
+            println(academicYearData)
 //
-            if (className == academicYearData.className && academicYearData.subjects!![subjectIndex].doesSubject) {
+            if (_className.value!! == academicYearData.className && academicYearData.subjects!![_subjectIndex.value!!].doesSubject) {
                 val score =
-                    academicYearData.subjects[subjectIndex].sequenceScores[sequenceIndex].score
+                    academicYearData.subjects!![_subjectIndex.value!!].sequenceScores[_sequenceIndex.value!!].score
                 val studentScore = StudentScore(it.studentId!!, it.studentName!!, score, academicYearData.studentClassNumber)
                 tempStudentsScoreList.add(studentScore)
                 tempStudentDataList.add(it)
@@ -85,6 +113,7 @@ class ScoreEditorActivityViewModel : ViewModel() {
 
         }
         _studentsScoreList.value = tempStudentsScoreList
+        _numberOfStudentsRegisteredSubject.value = tempStudentsScoreList.size
         _studentsDataToUse.value = tempStudentDataList
         initFirstCurrentAndLastStudentIndexes()
 
@@ -107,7 +136,12 @@ class ScoreEditorActivityViewModel : ViewModel() {
     private fun initFirstCurrentAndLastStudentIndexes() {
         firstStudentIndex = 0
         currentStudentIndex = 0
-        lastStudentIndex = _studentsScoreList.value!!.size - 1
+        lastStudentIndex = if(_studentsScoreList.value!!.isNotEmpty()){
+            _studentsScoreList.value!!.size - 1
+        }else{
+            0
+        }
+
         checkIfCurrentIndexEqualFirst()
         checkIfCurrentIndexEqualLast()
     }
@@ -150,9 +184,12 @@ class ScoreEditorActivityViewModel : ViewModel() {
 
     fun updateDatabase(){
         CoroutineScope(Dispatchers.IO).launch{
-            _studentsDataToUse.value!!.forEach {
-                database.studentDataDao().updateStudent(it)
+            _studentsDataToUse.value?.let {
+                _studentsDataToUse.value!!.forEach {
+                    database.studentDataDao().updateStudent(it)
+                }
             }
+
         }
     }
 

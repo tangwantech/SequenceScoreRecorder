@@ -14,7 +14,7 @@ import com.example.sequencescorerecorder.dataModels.StudentIdAndNameData
 
 class StudentDbHomeRecyclerAdapter(
     private val context: Context,
-    private val studentIdAndNameData: ArrayList<StudentData>,
+    private val studentIdAndNameData: ArrayList<StudentIdAndNameData>,
     private val homeRecyclerItemsClickListener: OnHomeRecyclerItemsClickListener
 ) : RecyclerView.Adapter<StudentDbHomeRecyclerAdapter.ViewHolder>() {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

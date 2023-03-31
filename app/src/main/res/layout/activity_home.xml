@@ -48,7 +48,7 @@
             android:text="@string/exit"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
         <Button
-            android:id="@+id/btnOk"
+            android:id="@+id/btnLoad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ok"

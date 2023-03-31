@@ -3,11 +3,7 @@ package com.example.sequencescorerecorder.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.Toast
+import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -27,19 +23,17 @@ class SubjectManagerActivity : AppCompatActivity(), SubjectCheckListRecyclerAdap
     private lateinit var autoStudentClass: AutoCompleteTextView
     private lateinit var autoStudentSubject: AutoCompleteTextView
     private lateinit var rvSubjectCheckList: RecyclerView
-    private lateinit var btnOk: Button
+    private lateinit var btnLoad: Button
     private lateinit var btnSave: Button
     private lateinit var checkboxAll: CheckBox
+    private lateinit var tvNumberOfStudents: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_subject_manager)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        schoolName = resources.getStringArray(R.array.schools)[intent.getIntExtra("schoolIndex", 0)]
-        academicYearIndex = intent.getIntExtra("academicYearIndex", 0)
-        className = resources.getStringArray(R.array.classes)[intent.getIntExtra("classIndex", 0)]
-        subjectIndex = intent.getIntExtra("subjectIndex", 0)
+
 
         initViewModel()
         initActivityViews()
@@ -49,17 +43,25 @@ class SubjectManagerActivity : AppCompatActivity(), SubjectCheckListRecyclerAdap
 
     }
     private fun initViewModel(){
+        schoolName = resources.getStringArray(R.array.schools)[intent.getIntExtra("schoolIndex", 0)]
+        academicYearIndex = intent.getIntExtra("academicYearIndex", 0)
+        className = resources.getStringArray(R.array.classes)[intent.getIntExtra("classIndex", 0)]
+        subjectIndex = intent.getIntExtra("subjectIndex", 0)
         viewModel = ViewModelProvider(this)[SubjectManagerViewModel::class.java]
+
         viewModel.initDatabase(this)
+        viewModel.setSchoolName(schoolName)
+        viewModel.setAcademicYearIndex(academicYearIndex!!)
     }
 
     private fun initActivityViews(){
         autoStudentClass = findViewById(R.id.autoStudentClass)
         autoStudentSubject = findViewById(R.id.autoStudentSubject)
         rvSubjectCheckList = findViewById(R.id.rvSubjectCheckList)
-        btnOk = findViewById(R.id.btnOk)
+        btnLoad = findViewById(R.id.btnLoad)
         btnSave = findViewById(R.id.btnSave)
         checkboxAll = findViewById(R.id.checkboxAll)
+        tvNumberOfStudents = findViewById(R.id.tvNumberOfStudents)
     }
 
     private fun setupActivityViews(){
@@ -88,7 +90,7 @@ class SubjectManagerActivity : AppCompatActivity(), SubjectCheckListRecyclerAdap
 
     private fun setupViewObservers(){
         viewModel.isClassAndSubjectIndexSet.observe(this, Observer {
-            btnOk.isEnabled = it
+            btnLoad.isEnabled = it
         })
 
         viewModel.studentSubjectStates.observe(this, Observer {
@@ -110,6 +112,22 @@ class SubjectManagerActivity : AppCompatActivity(), SubjectCheckListRecyclerAdap
         viewModel.allOffered.observe(this, Observer {
             rvSubjectCheckList.adapter?.notifyDataSetChanged()
         })
+
+        viewModel.numberOfStudentsTakingSubject.observe(this, Observer{
+            tvNumberOfStudents.text = it.toString()
+
+        })
+
+//        viewModel.subjectCheckedPosition.observe(this, Observer {
+//            rvSubjectCheckList.adapter?.notifyItemChanged(it)
+//        })
+
+
+//        viewModel.areAllOfStudentsSittingSubject.observe(this, Observer {
+//            checkboxAll.isChecked = it
+//        })
+
+
     }
 
     private fun setupViewListeners(){
@@ -119,14 +137,14 @@ class SubjectManagerActivity : AppCompatActivity(), SubjectCheckListRecyclerAdap
         autoStudentClass.setOnItemClickListener { _, _, i, _ ->
             viewModel.setStudentClassName(resources.getStringArray(R.array.classes)[i])
         }
-        btnOk.setOnClickListener {
-            viewModel.loadStudentsFromDatabaseWhere(schoolName, academicYearIndex!!)
+        btnLoad.setOnClickListener {
+            viewModel.loadStudentsFromDatabaseWhere()
         }
         btnSave.setOnClickListener {
             viewModel.updateDatabase()
         }
         checkboxAll.setOnCheckedChangeListener { _, checkState ->
-            viewModel.updateAllOffered(academicYearIndex!!, checkState)
+            viewModel.updateAllOffered(checkState)
         }
     }
 
@@ -150,7 +168,7 @@ class SubjectManagerActivity : AppCompatActivity(), SubjectCheckListRecyclerAdap
     }
 
     override fun onCheck(position: Int, state: Boolean) {
-//        println("${position}, ${state}")
         viewModel.updateStudentSubjectStateAt(academicYearIndex!!, position, state)
+
     }
 }

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
@@ -29,13 +28,13 @@ class ScoreEditorActivity : AppCompatActivity(),
     private lateinit var viewModel: ScoreEditorActivityViewModel
 
     private lateinit var tvSequenceName: TextView
-//    private lateinit var tvSubjectName: TextView
     private lateinit var tvStudentName: TextView
     private lateinit var inputStudentScore: TextInputEditText
     private lateinit var btnNext: Button
     private lateinit var btnPrevious: Button
     private lateinit var btnUpdate: Button
     private lateinit var rvScoreSheet: RecyclerView
+    private lateinit var tvNumberOfStudents: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,22 +42,28 @@ class ScoreEditorActivity : AppCompatActivity(),
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         schoolName = resources.getStringArray(R.array.schools)[intent.getIntExtra("schoolIndex", 0)]
-        academicYearIndex = intent.getIntExtra("academicYearIndex", 0)
-        className = resources.getStringArray(R.array.classes)[intent.getIntExtra("classIndex", 0)]
-        sequenceIndex = intent.getIntExtra("sequenceIndex", 0)
-        subjectIndex = intent.getIntExtra("subjectIndex", 0)
+
 
         initViewModel()
         initActivityViews()
-        setupRecyclerView()
         setupActivityViewObservers()
         setupActivityViewListeners()
     }
 
     private fun initViewModel() {
+        academicYearIndex = intent.getIntExtra("academicYearIndex", 0)
+        className = resources.getStringArray(R.array.classes)[intent.getIntExtra("classIndex", 0)]
+        sequenceIndex = intent.getIntExtra("sequenceIndex", 0)
+        subjectIndex = intent.getIntExtra("subjectIndex", 0)
+
         viewModel = ViewModelProvider(this)[ScoreEditorActivityViewModel::class.java]
         viewModel.initDatabase(this)
-        viewModel.getStudentsWhereSchool(schoolName)
+        viewModel.setAcademicYearIndex(academicYearIndex!!)
+        viewModel.setClassName(className)
+        viewModel.setSequenceIndex(sequenceIndex!!)
+        viewModel.setSubjectIndex(subjectIndex!!)
+        viewModel.loadStudentsWhereSchool(schoolName)
+
     }
 
     private fun initActivityViews() {
@@ -66,9 +71,6 @@ class ScoreEditorActivity : AppCompatActivity(),
         val subject = resources.getStringArray(R.array.subjects)[subjectIndex!!]
         tvSequenceName = findViewById(R.id.tvSequenceName)
         tvSequenceName.text = "$sequence, $subject"
-//        tvSubjectName = findViewById(R.id.tvSubjectName)
-//        tvSubjectName.text =
-//            "Subject: ${resources.getStringArray(R.array.subjects)[subjectIndex!!]}"
 
         tvStudentName = findViewById(R.id.tvStudentName)
         inputStudentScore = findViewById(R.id.inputStudentScore)
@@ -76,6 +78,7 @@ class ScoreEditorActivity : AppCompatActivity(),
         btnNext = findViewById(R.id.btnNext)
         btnUpdate = findViewById(R.id.btnUpdate)
         rvScoreSheet = findViewById(R.id.rvScoreSheet)
+        tvNumberOfStudents = findViewById(R.id.tvNumberOfStudents)
 
     }
 
@@ -90,7 +93,7 @@ class ScoreEditorActivity : AppCompatActivity(),
 
     }
 
-    private fun setupRecyclerView() {
+    private fun setupRecyclerView(studentsScoreList: ArrayList<StudentScore>) {
         val rvLayoutMan = LinearLayoutManager(this).apply {
             orientation = LinearLayoutManager.VERTICAL
         }
@@ -103,27 +106,17 @@ class ScoreEditorActivity : AppCompatActivity(),
                 )
             )
         }
-
-
-    }
-
-    private fun setupRecyclerAdapter() {
-
-        val studentsScoreList = viewModel.studentsScoreList.value!!
         val adapter = ScoreSheetRecyclerAdapter(this, studentsScoreList, this)
         rvScoreSheet.adapter = adapter
+
+
     }
 
     private fun setupActivityViewObservers() {
-        viewModel.areStudentsDataAvailable.observe(this, Observer {
-            if (it) {
-                viewModel.setStudentsScoreListAt(academicYearIndex!!, className, sequenceIndex!!, subjectIndex!!)
-            }
-        })
 
         viewModel.studentsScoreList.observe(this, Observer {
             if(it.isNotEmpty()){
-                setupRecyclerAdapter()
+                setupRecyclerView(it)
                 updateActivityViews(0)
             }
         })
@@ -138,6 +131,16 @@ class ScoreEditorActivity : AppCompatActivity(),
 
         viewModel.studentDataListChangedAt.observe(this, Observer{
             rvScoreSheet.adapter?.notifyItemChanged(it)
+        })
+
+        viewModel.numberOfStudentsRegisteredSubject.observe(this, Observer {
+            tvNumberOfStudents.text = it.toString()
+            inputStudentScore.apply {
+                isEnabled = it != 0
+                isFocusable = it != 0
+            }
+
+            btnUpdate.isEnabled = it != 0
         })
 
     }
