@@ -54,6 +54,7 @@
     <string name="number_of_students">Number of students</string>
     <string name="load">Load</string>
     <string name="_new">New</string>
+    <string name="add_students">Add students</string>
 
     <string-array name="sort_options">
         <item>ID</item>

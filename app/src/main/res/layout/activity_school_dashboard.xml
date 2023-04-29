@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.SchoolDashBoardActivity"
+    android:layout_marginStart="14dp"
+    android:layout_marginEnd="14dp">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_4"
+        android:layout_marginBottom="@dimen/margin_4">
+        <TextView
+            android:id="@+id/tvAcademicYear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_size_16"
+            android:text="Academic Year:"
+            android:gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="54dp"
+        android:id="@+id/btnDatabase"
+        android:text="@string/students_database"
+        android:layout_marginTop="@dimen/margin_8"
+        android:textAllCaps="true"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton">
+
+    </Button>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="54dp"
+        android:id="@+id/btnSequenceEditor"
+        android:layout_marginTop="@dimen/margin_8"
+        android:text="@string/score_sheets_manager"
+        android:textAllCaps="true"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton">
+
+    </Button>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="54dp"
+        android:id="@+id/btnSubjectManager"
+        android:layout_marginTop="@dimen/margin_8"
+        android:text="@string/subjects_manager"
+        android:textAllCaps="true"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton">
+
+    </Button>
+
+</LinearLayout>
