@@ -74,7 +74,7 @@ class SchoolDashBoardActivity : AppCompatActivity() {
     }
 
     private fun gotoSequenceClassSubjectSelectorActivity() {
-        val intent = Intent(this, SequenceClassSubjectSelectorActivity::class.java)
+        val intent = Intent(this, SequenceClassSubjectActivity::class.java)
         intent.apply{
             putExtra("title", btnSequenceEditor.text.toString())
             putExtra("schoolIndex", viewModel.getSchoolIndex())

@@ -18,7 +18,7 @@ abstract class StudentDatabase: RoomDatabase() {
         @Volatile
         private var INSTANCE: StudentDatabase? = null
 
-        fun getStudentDatabase(context: Context): StudentDatabase{
+        fun getStudentDatabase(context: Context): StudentDatabase {
             val tempInstance = INSTANCE
             if (tempInstance != null){
                 return tempInstance

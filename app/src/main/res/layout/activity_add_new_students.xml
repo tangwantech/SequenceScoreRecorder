@@ -28,7 +28,8 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/enter_student_id">
+            android:hint="@string/enter_student_id"
+            app:endIconMode="clear_text">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/studentId"
                 android:inputType="phone"
@@ -43,9 +44,9 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:layout_marginTop="@dimen/margin_4"
-            android:hint="@string/enter_student_name">
+            android:hint="@string/enter_student_name"
+            app:endIconMode="clear_text">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/studentName"
                 android:inputType="textPersonName"

@@ -13,11 +13,11 @@ import kotlinx.coroutines.launch
 class AddNewStudentsActivityViewModel: ViewModel() {
     private val _studentDataAllAcademicYears = MutableLiveData<ArrayList<StudentData>>(ArrayList())
 
-    private lateinit var database: StudentDatabase
+    private lateinit var database: com.example.sequencescorerecorder.database.StudentDatabase
 
     private val _tempStudentsData = ArrayList<StudentData>()
 
-    private val _studentsDataToDisplay = MutableLiveData<List<StudentData>>()
+    private val _studentsDataToDisplay = MutableLiveData<List<StudentData>>(ArrayList())
     val studentsDataToDisplay: LiveData<List<StudentData>> = _studentsDataToDisplay
 
     private val _schoolName = MutableLiveData<String>()
@@ -108,7 +108,15 @@ class AddNewStudentsActivityViewModel: ViewModel() {
     }
 
     fun checkIdInDatabase(studentId: String) {
+
         when (studentId) {
+            in _tempStudentIdsForUseInCurrentAcademicYear.value!! -> {
+                _idInExistingListDisplayed.value = studentId
+                val studentIndex = _tempStudentIdsForUseInCurrentAcademicYear.value!!.indexOf(studentId)
+                val studentName = _studentsDataToDisplay.value!![studentIndex].studentName!!
+                val studentGender = _studentsDataToDisplay.value!![studentIndex].studentGender!!
+                _studentNameAndGender.value = StudentNameAndGender(studentName, studentGender)
+            }
             in _studentIdsBeingUsedInCurrentAcademicYear.value!! -> {
                 _idInExistingListDisplayed.value = studentId
                 val studentIndex = _studentIdsInSchoolDatabase.value!!.indexOf(studentId)
@@ -125,6 +133,7 @@ class AddNewStudentsActivityViewModel: ViewModel() {
                 _indexOfStudentId.value = studentIndex
 
             }
+
             else -> {
                 _idInExistingListDisplayed.value = null
                 _studentNameAndGender.value = StudentNameAndGender()
@@ -199,15 +208,15 @@ class AddNewStudentsActivityViewModel: ViewModel() {
             _academicYear.value,
             academicYears
         )
-        _tempStudentIdsForUseInCurrentAcademicYear.value!!.add(0, studentId)
-        _tempStudentsData.add(0, studentData)
+        _tempStudentIdsForUseInCurrentAcademicYear.value!!.add(studentId)
+        _tempStudentsData.add(studentData)
         _studentsDataToDisplay.value = _tempStudentsData
 
 
     }
 
     fun writeStudentsDataToDatabase() {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             if (_tempStudentsData.isNotEmpty()) {
                 _tempStudentsData.forEach { studentData ->
                     database.studentDataDao().insertStudent(studentData)

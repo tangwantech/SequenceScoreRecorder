@@ -7,14 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.sequencescorerecorder.dataModels.StudentAcademicYearData
 import com.example.sequencescorerecorder.dataModels.StudentData
 import com.example.sequencescorerecorder.dataModels.StudentIdAndNameData
-import com.example.sequencescorerecorder.database.StudentDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SchoolDatabaseActivityViewModel: ViewModel() {
-    private lateinit var database: StudentDatabase
+    private lateinit var database: com.example.sequencescorerecorder.database.StudentDatabase
 
     private val _schoolName = MutableLiveData<String>()
     val schoolName: LiveData<String> = _schoolName
@@ -30,20 +29,20 @@ class SchoolDatabaseActivityViewModel: ViewModel() {
 
     //    MutableLiveData of ArrayList to hold students data for all academic years in database
     private val _studentsDataAllAcademicYears =
-        MutableLiveData<ArrayList<StudentData>?>(ArrayList())
+        MutableLiveData<ArrayList<StudentData>?>(null)
     val studentsDataAllAcademicYears: LiveData<ArrayList<StudentData>?> =
         _studentsDataAllAcademicYears
 
     private val _studentsDataCurrentAcademicYear =
-        MutableLiveData<ArrayList<StudentAcademicYearData>>(
-            ArrayList()
+        MutableLiveData<ArrayList<StudentAcademicYearData>?>(
+            null
         )
-    val studentsDataCurrentAcademicYear: LiveData<ArrayList<StudentAcademicYearData>> =
+    val studentsDataCurrentAcademicYear: LiveData<ArrayList<StudentAcademicYearData>?> =
         _studentsDataCurrentAcademicYear
 
     //    MutableLiveData of ArrayList to hold student name and id only
-    private val _studentsIdAndNameData = MutableLiveData<ArrayList<StudentIdAndNameData>>()
-    val studentsIdAndNameData: LiveData<ArrayList<StudentIdAndNameData>> = _studentsIdAndNameData
+    private val _studentsIdAndNameData = MutableLiveData<ArrayList<StudentIdAndNameData>?>(null)
+    val studentsIdAndNameData: LiveData<ArrayList<StudentIdAndNameData>?> = _studentsIdAndNameData
 
     //    MutableLiveData of Int to hold the total number of students for current academic year
     private val _totalNumberOfStudents = MutableLiveData<Int>()
@@ -72,7 +71,7 @@ class SchoolDatabaseActivityViewModel: ViewModel() {
     private val _selectedClassIndex = MutableLiveData<Int>()
     val selectedClassIndex: LiveData<Int> = _selectedClassIndex
 
-    fun initDatabase(database: StudentDatabase) {
+    fun initDatabase(database: com.example.sequencescorerecorder.database.StudentDatabase) {
         this.database = database
     }
 
@@ -101,12 +100,12 @@ class SchoolDatabaseActivityViewModel: ViewModel() {
     }
 
     private fun getAllStudentsFromDatabaseInCurrentSchool() {
-        _studentsDataAllAcademicYears.value?.clear()
-        _studentsDataCurrentAcademicYear.value?.clear()
-        _studentsIdAndNameData.value?.clear()
+
         viewModelScope.launch(Dispatchers.IO) {
+            nullifyData()
             val studentsDataBySchool =
                 database.studentDataDao().getStudentsBySchool(_schoolName.value)
+//
             var tempStudentsDataBySchool = ArrayList<StudentData>()
 
             studentsDataBySchool.forEachIndexed { _, studentData ->
@@ -114,11 +113,16 @@ class SchoolDatabaseActivityViewModel: ViewModel() {
                 tempStudentsDataBySchool.add(studentData)
 
             }
+
             withContext(Dispatchers.Main) {
+//                println(tempStudentsDataBySchool)
                 if (tempStudentsDataBySchool.isNotEmpty()) {
+
+
                     tempStudentsDataBySchool = setStudentsClassNumbersForSelectedClass(tempStudentsDataBySchool)
+
                     if (_sortOptionIndex.value!! == 0) {
-                        tempStudentsDataBySchool.sortBy { studentData -> studentData.studentId }
+                        tempStudentsDataBySchool.sortBy { studentData -> studentData.studentId?.toInt() }
                     } else {
                         tempStudentsDataBySchool.sortBy { studentData -> studentData.studentName }
                     }
@@ -135,6 +139,7 @@ class SchoolDatabaseActivityViewModel: ViewModel() {
 
     private fun setStudentsIdsAndNamesDataList() {
         val tempIdsAndNamesList = ArrayList<StudentIdAndNameData>()
+        _studentsDataCurrentAcademicYear.value = ArrayList()
         _studentsDataAllAcademicYears.value?.forEachIndexed { index, studentData ->
             if (studentData.academicYears[_academicYearIndex.value!!].academicYear == _academicYear.value!!) {
                 tempIdsAndNamesList.add(
@@ -158,23 +163,31 @@ class SchoolDatabaseActivityViewModel: ViewModel() {
 
         _studentsIdAndNameData.value = tempIdsAndNamesList
         updateTotalNumberOfStudents()
+
     }
 
+
     private fun setStudentsClassNumbersForSelectedClass(tempData: ArrayList<StudentData>): ArrayList<StudentData>{
+//        println(tempData)
         var studentClassNumber = 0
         tempData.sortBy{studentData -> studentData.studentName }
         tempData.forEachIndexed { index, studentData ->
-            if (studentData.academicYears[_academicYearIndex.value!!].academicYear == _academicYear.value!! && studentData.academicYears[_academicYearIndex.value!!].className == _selectedClass.value) {
+            if (studentData.academicYears[_academicYearIndex.value!!].academicYear == _academicYear.value && studentData.academicYears[_academicYearIndex.value!!].className == _selectedClass.value) {
                 studentClassNumber += 1
                 tempData[index].academicYears[_academicYearIndex.value!!].studentClassNumber =
                     studentClassNumber.toString()
+                println(studentClassNumber)
             }
         }
+//        println(tempData)
         return tempData
     }
 
     private fun updateTotalNumberOfStudents() {
-        _totalNumberOfStudents.value = _studentsIdAndNameData.value!!.size
+        _studentsIdAndNameData.value?.let{
+            _totalNumberOfStudents.value = it.size
+        }
+
     }
 
     fun deleteStudentDataAt(position: Int) {
@@ -251,7 +264,7 @@ class SchoolDatabaseActivityViewModel: ViewModel() {
             database.studentDataDao().deleteAllStudents()
             refreshDatabase()
             withContext(Dispatchers.Main) {
-                _isClearDatabaseSuccessful.value = _studentsDataAllAcademicYears.value!!.isEmpty()
+                _isClearDatabaseSuccessful.value = _studentsDataAllAcademicYears.value!!.isNullOrEmpty()
 //                refreshDatabase()
             }
 
@@ -283,4 +296,14 @@ class SchoolDatabaseActivityViewModel: ViewModel() {
     fun resetDeletedItemPosition() {
         _deletedItemPosition.value = null
     }
+
+    private fun nullifyData(){
+        _studentsDataAllAcademicYears.postValue(null)
+        _studentsDataCurrentAcademicYear.postValue(null)
+        _studentsIdAndNameData.postValue(null)
+    }
+
+//    fun getStudentDataAtPosition(position: Int): StudentAcademicYearData{
+//        return
+//    }
 }

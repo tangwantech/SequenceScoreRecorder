@@ -48,7 +48,7 @@ class AddNewStudentsActivity : AppCompatActivity() {
         val schoolName = resources.getStringArray(R.array.schools)[intent.getIntExtra("schoolIndex", 0)]
         val academicYear = resources.getStringArray(R.array.academic_years)[intent.getIntExtra("academicYearIndex", 0)]
         viewModel = ViewModelProvider(this)[AddNewStudentsActivityViewModel::class.java]
-        viewModel.initDatabase(StudentDatabase.getStudentDatabase(this))
+        viewModel.initDatabase(com.example.sequencescorerecorder.database.StudentDatabase.getStudentDatabase(this))
         viewModel.setSchoolName(schoolName)
         viewModel.setAcademicYear(academicYear)
         viewModel.setAcademicYearIndex(intent.getIntExtra("academicYearIndex", 0))
@@ -177,9 +177,11 @@ class AddNewStudentsActivity : AppCompatActivity() {
             android.R.id.home -> {
                 finish()
             }
+
         }
-        return true
+        return super.onOptionsItemSelected(item)
     }
+
 
     override fun onPause() {
         super.onPause()

@@ -14,7 +14,7 @@ import com.example.sequencescorerecorder.dataModels.StudentIdAndNameData
 
 class StudentDbHomeRecyclerAdapter(
     private val context: Context,
-    private val studentIdAndNameData: ArrayList<StudentIdAndNameData>,
+    private var studentIdAndNameData: ArrayList<StudentIdAndNameData>?,
     private val homeRecyclerItemsClickListener: OnHomeRecyclerItemsClickListener
 ) : RecyclerView.Adapter<StudentDbHomeRecyclerAdapter.ViewHolder>() {
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -46,15 +46,26 @@ class StudentDbHomeRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if(studentIdAndNameData.isNotEmpty()){
-            holder.tvStudentId.text = "ID: ${studentIdAndNameData[position].studentId}"
-            holder.tvStudentName.text = "Name: ${studentIdAndNameData[position].studentName}"
+        studentIdAndNameData?.let{
+            holder.tvStudentId.text = "ID: ${it[position].studentId}"
+            holder.tvStudentName.text = "Name: ${it[position].studentName}"
         }
+//        if(studentIdAndNameData.isNotEmpty()){
+//            holder.tvStudentId.text = "ID: ${studentIdAndNameData[position].studentId}"
+//            holder.tvStudentName.text = "Name: ${studentIdAndNameData[position].studentName}"
+//        }
 
     }
 
     override fun getItemCount(): Int {
-        return studentIdAndNameData.size
+        if(studentIdAndNameData == null){
+            return 0
+        }
+        return studentIdAndNameData!!.size
+    }
+
+    fun updateData(studentIdAndNameData: ArrayList<StudentIdAndNameData>){
+        this.studentIdAndNameData = studentIdAndNameData
     }
 
 

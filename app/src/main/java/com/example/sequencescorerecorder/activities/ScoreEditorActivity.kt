@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
@@ -12,10 +13,12 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sequencescorerecorder.R
+import com.example.sequencescorerecorder.SequenceScoreRecorderConstants
 import com.example.sequencescorerecorder.adapters.ScoreSheetRecyclerAdapter
 import com.example.sequencescorerecorder.dataModels.StudentScore
 import com.example.sequencescorerecorder.viewModels.ScoreEditorActivityViewModel
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 
 class ScoreEditorActivity : AppCompatActivity(),
     ScoreSheetRecyclerAdapter.OnScoreListItemClickListener {
@@ -27,14 +30,18 @@ class ScoreEditorActivity : AppCompatActivity(),
 
     private lateinit var viewModel: ScoreEditorActivityViewModel
 
-    private lateinit var tvSequenceName: TextView
+    private lateinit var tvClassName: TextView
+    private lateinit var tvSubject: TextView
     private lateinit var tvStudentName: TextView
+    private lateinit var textInputLayout: TextInputLayout
     private lateinit var inputStudentScore: TextInputEditText
     private lateinit var btnNext: Button
     private lateinit var btnPrevious: Button
     private lateinit var btnUpdate: Button
+    private lateinit var btnStatistics: Button
     private lateinit var rvScoreSheet: RecyclerView
     private lateinit var tvNumberOfStudents: TextView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,16 +74,19 @@ class ScoreEditorActivity : AppCompatActivity(),
     }
 
     private fun initActivityViews() {
-        val sequence = resources.getStringArray(R.array.sequences)[sequenceIndex!!]
-        val subject = resources.getStringArray(R.array.subjects)[subjectIndex!!]
-        tvSequenceName = findViewById(R.id.tvSequenceName)
-        tvSequenceName.text = "$sequence, $subject"
-
+        val subject = "Subject: ${resources.getStringArray(R.array.subjects)[subjectIndex!!]}"
+        val className = "Class: ${resources.getStringArray(R.array.classes)[intent.getIntExtra(" classIndex ", 0)]}"
+        tvClassName = findViewById(R.id.tvClassName)
+        tvClassName.text = className
+        tvSubject = findViewById(R.id.tvSubject)
+        tvSubject.text = subject
+        textInputLayout = findViewById(R.id.textInputLayout)
         tvStudentName = findViewById(R.id.tvStudentName)
         inputStudentScore = findViewById(R.id.inputStudentScore)
         btnPrevious = findViewById(R.id.btnPrevious)
         btnNext = findViewById(R.id.btnNext)
         btnUpdate = findViewById(R.id.btnUpdate)
+        btnStatistics = findViewById(R.id.btnStatistics)
         rvScoreSheet = findViewById(R.id.rvScoreSheet)
         tvNumberOfStudents = findViewById(R.id.tvNumberOfStudents)
 
@@ -141,11 +151,33 @@ class ScoreEditorActivity : AppCompatActivity(),
             }
 
             btnUpdate.isEnabled = it != 0
+
         })
+
+        viewModel.numberSat.observe(this, Observer {
+            btnStatistics.isEnabled = it > 0
+        })
+
 
     }
 
     private fun setupActivityViewListeners() {
+        inputStudentScore.doOnTextChanged { text, _, _, _ ->
+            if(text.toString().isNotEmpty()){
+                if(text.toString().toDouble() > 20.0){
+                    btnUpdate.isEnabled = false
+                    textInputLayout.error = "Invalid score"
+
+                }else{
+                    textInputLayout.error = null
+                    btnUpdate.isEnabled = true
+                }
+            }
+//            else{
+//                btnUpdate.isEnabled = false
+//            }
+
+        }
         btnNext.setOnClickListener {
             val currentIndex = viewModel.incrementCurrentStudentIndex()
             updateActivityViews(currentIndex)
@@ -159,13 +191,23 @@ class ScoreEditorActivity : AppCompatActivity(),
         }
 
         btnUpdate.setOnClickListener {
-            updateStudentScoreAt(academicYearIndex!!, className, sequenceIndex!!, subjectIndex!!, inputStudentScore.text.toString().toDouble())
+            if(inputStudentScore.text.toString().isNotEmpty()){
+                updateStudentScoreAt(academicYearIndex!!, sequenceIndex!!, subjectIndex!!, inputStudentScore.text.toString().toDouble())
+
+            }else{
+                updateStudentScoreAt(academicYearIndex!!, sequenceIndex!!, subjectIndex!!, null)
+
+            }
 
         }
 
-        inputStudentScore.doOnTextChanged { text, _, _, _ ->
-            btnUpdate.isEnabled = text!!.isNotEmpty()
+        btnStatistics.setOnClickListener {
+            displayStatisticsDialog()
         }
+
+//        inputStudentScore.doOnTextChanged { text, _, _, _ ->
+//            btnUpdate.isEnabled = text!!.isNotEmpty()
+//        }
 
     }
 
@@ -177,7 +219,9 @@ class ScoreEditorActivity : AppCompatActivity(),
 
     override fun onResume() {
         super.onResume()
-        title = "${resources.getStringArray(R.array.classes)[intent.getIntExtra(" classIndex ", 0)]} ${resources.getString(R.string.score_sheet)}"
+        val sequence = resources.getStringArray(R.array.sequences)[sequenceIndex!!]
+        title = sequence
+//        title = "${resources.getStringArray(R.array.classes)[intent.getIntExtra(" classIndex ", 0)]} ${resources.getString(R.string.score_sheet)}"
 
     }
 
@@ -196,16 +240,45 @@ class ScoreEditorActivity : AppCompatActivity(),
 
     private fun updateStudentScoreAt(
         academicYearIndex: Int,
-        className: String,
         sequenceIndex: Int,
         subjectIndex: Int,
-        score: Double
+        score: Double?
     ) {
-        viewModel.updateStudentScoreAt(academicYearIndex, className, sequenceIndex, subjectIndex, score)
+        viewModel.updateStudentScoreAt(academicYearIndex, sequenceIndex, subjectIndex, score)
     }
 
-    override fun onStop() {
+    private fun displayStatisticsDialog(){
+        val view = layoutInflater.inflate(R.layout.statistics_dialog, null)
+        val tvNumberRegistered: TextView = view.findViewById(R.id.tvNumberRegistered)
+        val tvNumberSat: TextView = view.findViewById(R.id.tvNumberSat)
+        val tvNumberPassed: TextView = view.findViewById(R.id.tvNumberPassed)
+        val tvPercentagePassed: TextView = view.findViewById(R.id.tvPercentagePassed)
+
+
+        tvNumberRegistered.text =  "Number Registered: ${viewModel.numberOfStudentsRegisteredSubject.value}"
+        tvNumberSat.text = "Number sat: ${viewModel.numberSat.value}"
+        tvNumberPassed.text = "Number passed: ${viewModel.numberPassed.value}"
+        tvPercentagePassed.text = "Percentage passed: ${viewModel.percentagePassed.value}"
+
+        if(viewModel.percentagePassed.value!! >= SequenceScoreRecorderConstants.AVERAGE_PERCENTAGE ){
+            tvPercentagePassed.setTextColor(resources.getColor(R.color.color_pass))
+        }else{
+            tvPercentagePassed.setTextColor(resources.getColor(R.color.color_fail))
+        }
+
+
+        val statDialog = AlertDialog.Builder(this).apply{
+            setTitle(resources.getString(R.string.statistics))
+            setView(view)
+            setPositiveButton(resources.getString(R.string.ok)){_, _ ->
+
+            }
+        }.create()
+        statDialog.show()
+    }
+
+    override fun onPause() {
+        super.onPause()
         viewModel.updateDatabase()
-        super.onStop()
     }
 }

@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sequencescorerecorder.R
+import com.example.sequencescorerecorder.SequenceScoreRecorderConstants
 import com.example.sequencescorerecorder.dataModels.StudentScore
 
 class ScoreSheetRecyclerAdapter(private val context: Context, private val studentsScoreList: ArrayList<StudentScore>, private val itemClickListener: OnScoreListItemClickListener) : RecyclerView.Adapter<ScoreSheetRecyclerAdapter.ViewHolder>(){
@@ -44,9 +45,21 @@ class ScoreSheetRecyclerAdapter(private val context: Context, private val studen
 
         if(studentsScoreList[position].studentScore == null){
             holder.tvStudentScore.text = "NA"
+            holder.tvStudentScore.setTextColor(context.resources.getColor(R.color.primary_text_color))
         }else{
             holder.tvStudentScore.text = studentsScoreList[position].studentScore.toString()
+            studentsScoreList[position].studentScore?.let{
+                if(studentsScoreList[position].studentScore!! >= SequenceScoreRecorderConstants.AVERAGE_SCORE){
+                    holder.tvStudentScore.setTextColor(context.resources.getColor(R.color.color_pass))
+                }else{
+                    holder.tvStudentScore.setTextColor(context.resources.getColor(R.color.color_fail))
+                }
+            }
         }
+
+
+
+
 
     }
 

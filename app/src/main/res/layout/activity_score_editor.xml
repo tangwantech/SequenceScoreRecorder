@@ -11,11 +11,16 @@
     android:paddingTop="@dimen/margin_4">
 
     <TextView
-        android:id="@+id/tvSequenceName"
+        android:id="@+id/tvClassName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:textStyle="bold"
+        android:textSize="@dimen/text_size_16"/>
+    <TextView
+        android:id="@+id/tvSubject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:textSize="@dimen/text_size_16"/>
 
     <com.google.android.material.divider.MaterialDivider
@@ -42,6 +47,7 @@
                 android:textAllCaps="true"/>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/enter_score"
@@ -53,6 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="numberDecimal" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
@@ -92,6 +99,22 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
             </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end">
+                <Button
+                    android:id="@+id/btnStatistics"
+                    android:layout_width="wrap_content"
+                    android:minWidth="@dimen/value_50"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/value_36"
+                    android:text="@string/statistics"
+                    android:textSize="@dimen/text_size_12"
+                    android:layout_marginStart="@dimen/margin_8"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -114,8 +137,10 @@
             android:layout_width="0dp"
             android:layout_weight="0.5"
             android:layout_height="match_parent"
-            android:gravity="end"
-            android:textStyle="bold"/>
+            android:gravity="center"
+            android:text="40"
+            android:textStyle="bold"
+            android:paddingStart="@dimen/margin_56"/>
     </LinearLayout>
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"

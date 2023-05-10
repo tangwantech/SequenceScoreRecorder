@@ -21,4 +21,7 @@
     <color name="secondary_text_color">#757575</color>
     <color name="divider_color">#BDBDBD</color>
 
+    <color name="color_fail">#F42525</color>
+    <color name="color_pass">#1833DF</color>
+
 </resources>

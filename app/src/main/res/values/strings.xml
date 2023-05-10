@@ -55,6 +55,7 @@
     <string name="load">Load</string>
     <string name="_new">New</string>
     <string name="add_students">Add students</string>
+    <string name="statistics">Statistics</string>
 
     <string-array name="sort_options">
         <item>ID</item>

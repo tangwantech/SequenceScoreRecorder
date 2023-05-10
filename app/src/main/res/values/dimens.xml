@@ -9,6 +9,11 @@
     <dimen name="margin_24">24dp</dimen>
     <dimen name="margin_32">32dp</dimen>
     <dimen name="margin_36">36dp</dimen>
+    <dimen name="margin_40">40dp</dimen>
+    <dimen name="margin_44">44dp</dimen>
+    <dimen name="margin_56">56dp</dimen>
+
+
 
     <dimen name="headerHeight">36dp</dimen>
 
@@ -19,5 +24,6 @@
     <dimen name="text_size_20">20sp</dimen>
 
     <dimen name="value_50">50dp</dimen>
+    <dimen name="value_44">44dp</dimen>
     <dimen name="value_36">36dp</dimen>
 </resources>

@@ -7,5 +7,7 @@ class SequenceScoreRecorderConstants {
         const val ACADEMIC_YEAR_INDEX = "academicYearIndex"
         const val SORT_INDEX = "sortIndex"
         const val SELECTED_CLASS_INDEX = "SelectedClassIndex"
+        const val AVERAGE_SCORE = 10.0
+        const val AVERAGE_PERCENTAGE = 50.0
     }
 }

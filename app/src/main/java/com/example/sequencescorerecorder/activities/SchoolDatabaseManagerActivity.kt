@@ -27,6 +27,7 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
     private lateinit var viewModel: SchoolDatabaseActivityViewModel
     private lateinit var btnNewStudent: Button
     private lateinit var rvStudentDbHomeRecycler: RecyclerView
+    private lateinit var adapter: StudentDbHomeRecyclerAdapter
     private lateinit var rvLayout: LinearLayout
     private lateinit var tvNoDataAvailable: TextView
     private lateinit var tvTotalNumberOfStudents: TextView
@@ -43,8 +44,13 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         pref = getSharedPreferences(SCHOOL_DATABASE_ACTIVITY, MODE_PRIVATE)
 
+        initialize()
+    }
+
+    private fun initialize(){
         initViewModel()
         initViews()
+        setupRecyclerView()
         setupViewListeners()
         setupViewObservers()
     }
@@ -63,7 +69,7 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
         viewModel =
             ViewModelProvider(this)[SchoolDatabaseActivityViewModel::class.java]
         viewModel.initDatabase(
-            StudentDatabase.getStudentDatabase(
+            com.example.sequencescorerecorder.database.StudentDatabase.getStudentDatabase(
                 this
             )
         )
@@ -90,7 +96,6 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
         rvLayout = findViewById(R.id.rvLayout)
         btnRefresh = findViewById(R.id.btnRefresh)
         autoCompleteSort = findViewById(R.id.autoCompleteSort)
-
         tvSchool = findViewById(R.id.tvSchool)
         tvSchool.text = "${resources.getString(R.string.school)}: ${viewModel.schoolName.value}"
         tvAcademicYear = findViewById(R.id.tvAcademicYear)
@@ -102,6 +107,7 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
 
         btnRefresh.setOnClickListener {
             viewModel.refreshDatabase()
+//            initialize()
         }
         btnClearDatabase.setOnClickListener {
             displayMessageToClearDatabase()
@@ -166,11 +172,12 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
                 studentsIdAndNameDataList?.let {
                     if (it.isNotEmpty()) {
                         showRecyclerView()
-                        setupRecyclerView(it)
 
                     } else {
                         hideRecyclerView()
                     }
+                    adapter.updateData(it)
+                    rvStudentDbHomeRecycler.adapter?.notifyDataSetChanged()
                 }
 
 
@@ -206,7 +213,7 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
                 if(it){
 
                     hideRecyclerView()
-                    println("Data cleared...")
+//                    println("Data cleared...")
 
                     Toast.makeText(
                         this,
@@ -217,10 +224,11 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
 
                 }
             })
+
     }
 
-    private fun setupRecyclerView(studentIdAndNameDataList: ArrayList<StudentIdAndNameData>) {
-
+    private fun setupRecyclerView() {
+//        studentIdAndNameDataList: ArrayList<StudentIdAndNameData>
         val layoutMan = LinearLayoutManager(this)
         layoutMan.orientation = LinearLayoutManager.VERTICAL
         rvStudentDbHomeRecycler.layoutManager = layoutMan
@@ -230,12 +238,14 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
                 LinearLayoutManager.VERTICAL
             )
         )
-        val adapter = StudentDbHomeRecyclerAdapter(
+        adapter = StudentDbHomeRecyclerAdapter(
             this,
-            studentIdAndNameDataList,
+            viewModel.studentsIdAndNameData.value,
             this
         )
         rvStudentDbHomeRecycler.adapter = adapter
+        rvStudentDbHomeRecycler.setHasFixedSize(true)
+//        rvStudentDbHomeRecycler.adapter?.notifyDataSetChanged()
 //
 
     }
@@ -357,40 +367,47 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
         val deleteStudentDataDialog = AlertDialog.Builder(this)
         deleteStudentDataDialog.apply {
             setView(view)
+            setTitle(resources.getString(R.string.delete))
             setPositiveButton(resources.getString(R.string.delete)) { _, _ ->
                 viewModel.deleteStudentDataAt(position)
             }
-            setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
+            setNegativeButton(resources.getString(R.string.ok)) { _, _ ->
 
             }
         }.create().show()
     }
 
     private fun displayStudentDetailsDialog(position: Int) {
-        val studentData = viewModel.studentsDataCurrentAcademicYear.value!![position]
-        val view = layoutInflater.inflate(R.layout.student_details, null)
+//        println(viewModel.studentsDataCurrentAcademicYear.value)
+        viewModel.studentsDataCurrentAcademicYear.value?.let{
+            val studentData = it[position]
 
-        val studentId: TextView = view.findViewById(R.id.tvIdDetails)
-        val studentName: TextView = view.findViewById(R.id.tvNameDetails)
-        val studentGender: TextView = view.findViewById(R.id.tvGenderDetails)
-        val studentClass: TextView = view.findViewById(R.id.tvClassDetails)
+            val view = layoutInflater.inflate(R.layout.student_details, null)
 
-        studentId.text =
-            "${resources.getString(R.string.id)} ${studentData.studentId}"
-        studentName.text =
-            "${resources.getString(R.string.name)} ${studentData.studentName}"
-        studentName.visibility = View.GONE
-        studentGender.text =
-            "${resources.getString(R.string.gender)} ${studentData.studentGender}"
-        studentClass.text =
-            "${resources.getString(R.string._class)} ${studentData.academicYear?.className}"
+            val studentId: TextView = view.findViewById(R.id.tvIdDetails)
+            val studentName: TextView = view.findViewById(R.id.tvNameDetails)
+            val studentGender: TextView = view.findViewById(R.id.tvGenderDetails)
+            val studentClass: TextView = view.findViewById(R.id.tvClassDetails)
 
-        val studentDetailsDialog = AlertDialog.Builder(this)
-        studentDetailsDialog.apply {
-            setView(view)
-            setTitle(studentData.studentName?.uppercase())
-            setPositiveButton(resources.getString(R.string.ok)) { _, _ -> }
-        }.create().show()
+            studentId.text =
+                "${resources.getString(R.string.id)} ${studentData.studentId}"
+            studentName.text =
+                "${resources.getString(R.string.name)} ${studentData.studentName}"
+            studentName.visibility = View.GONE
+            studentGender.text =
+                "${resources.getString(R.string.gender)} ${studentData.studentGender}"
+            studentClass.text =
+                "${resources.getString(R.string._class)} ${studentData.academicYear?.className}"
+
+            val studentDetailsDialog = AlertDialog.Builder(this)
+            studentDetailsDialog.apply {
+                setView(view)
+                setTitle(studentData.studentName?.uppercase())
+                setPositiveButton(resources.getString(R.string.ok)) { _, _ -> }
+            }.create().show()
+        }
+
+
     }
 
 
@@ -410,8 +427,15 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
     override fun onResume() {
         super.onResume()
         title = resources.getString(R.string.students_database)
+//        initialize()
         setupAutoCompleteViews()
+        println("OnResume")
         viewModel.refreshDatabase()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.updateDatabase()
     }
 
 }

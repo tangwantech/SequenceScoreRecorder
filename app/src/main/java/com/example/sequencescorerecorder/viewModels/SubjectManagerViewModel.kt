@@ -15,7 +15,7 @@ import kotlinx.coroutines.withContext
 
 
 class SubjectManagerViewModel : ViewModel() {
-    private lateinit var database: StudentDatabase
+    private lateinit var database: com.example.sequencescorerecorder.database.StudentDatabase
     private val _studentsData = MutableLiveData<ArrayList<StudentData>>()
     private val _studentSubjectStates = MutableLiveData<ArrayList<StudentSubjectStateData>>()
     val studentSubjectStates: LiveData<ArrayList<StudentSubjectStateData>> = _studentSubjectStates
@@ -42,7 +42,7 @@ class SubjectManagerViewModel : ViewModel() {
 //    val subjectCheckedPosition: LiveData<Int> = _subjectCheckedPosition
 
     fun initDatabase(context: Context) {
-        database = StudentDatabase.getStudentDatabase(context)
+        database = com.example.sequencescorerecorder.database.StudentDatabase.getStudentDatabase(context)
     }
 
     fun setSchoolName(schoolName: String){
