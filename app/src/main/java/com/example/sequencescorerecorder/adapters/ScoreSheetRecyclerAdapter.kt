@@ -45,7 +45,7 @@ class ScoreSheetRecyclerAdapter(private val context: Context, private val studen
 
         if(studentsScoreList[position].studentScore == null){
             holder.tvStudentScore.text = "NA"
-            holder.tvStudentScore.setTextColor(context.resources.getColor(R.color.primary_text_color))
+            holder.tvStudentScore.setTextColor(context.resources.getColor(R.color.secondary_text_color))
         }else{
             holder.tvStudentScore.text = studentsScoreList[position].studentScore.toString()
             studentsScoreList[position].studentScore?.let{

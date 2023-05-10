@@ -371,7 +371,7 @@ class SchoolDatabaseManagerActivity : AppCompatActivity(), StudentDbHomeRecycler
             setPositiveButton(resources.getString(R.string.delete)) { _, _ ->
                 viewModel.deleteStudentDataAt(position)
             }
-            setNegativeButton(resources.getString(R.string.ok)) { _, _ ->
+            setNegativeButton(resources.getString(R.string.cancel)) { _, _ ->
 
             }
         }.create().show()

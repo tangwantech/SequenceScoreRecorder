@@ -21,7 +21,7 @@
     <string name="already_exists">already exists.</string>
     <string name="clear_current_list">Clear current list</string>
     <string name="_continue">Continue</string>
-    <string name="delete">delete</string>
+    <string name="delete">Delete</string>
     <string name="add">Add</string>
     <string name="clear_database">Clear database</string>
     <string name="message_to_clear_database">This action will permanently erase all students data in database</string>
